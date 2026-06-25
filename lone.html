@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hearts — Bloom · DNA · Infinite</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,600&family=Cinzel:wght@400&family=Pinyon+Script&family=Great+Vibes&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#02000a;overflow:hidden;width:100vw;height:100vh;cursor:none;}
+canvas{position:fixed;top:0;left:0;}
+
+/* Tab switcher */
+#tabs{
+  position:fixed;bottom:32px;left:50%;transform:translateX(-50%);
+  display:flex;gap:12px;z-index:100;pointer-events:all;
+}
+.tab{
+  padding:9px 24px;border:1px solid rgba(255,150,200,.3);
+  background:rgba(10,0,20,.6);backdrop-filter:blur(10px);
+  color:rgba(255,180,210,.6);font-family:'Cinzel',serif;
+  font-size:.7rem;letter-spacing:.2em;cursor:pointer;
+  transition:all .3s;border-radius:1px;
+}
+.tab:hover,.tab.active{
+  background:rgba(255,60,140,.15);
+  border-color:rgba(255,100,180,.7);
+  color:#fff;
+  box-shadow:0 0 20px rgba(255,60,140,.3);
+}
+
+/* Title */
+#title{
+  position:fixed;top:28px;left:50%;transform:translateX(-50%);
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(1.1rem,3vw,1.8rem);
+  color:rgba(255,200,230,.5);letter-spacing:.3em;
+  z-index:100;pointer-events:none;
+  transition:opacity .6s;
+  white-space:nowrap;
+}
+
+#cursor{position:fixed;pointer-events:none;z-index:999;transform:translate(-50%,-50%);}
+
+#sandra-name {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 80;
+  text-align: center;
+  animation: nameFloat 3s ease-in-out infinite;
+}
+.sname {
+  font-family: 'Pinyon Script', cursive;
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  color: transparent;
+  background: linear-gradient(135deg, #ffe8f5, #ff6eb4, #fff5fb, #ff3a9d, #ffd6ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  letter-spacing: .08em;
+  filter: drop-shadow(0 0 30px rgba(255,80,170,.9)) drop-shadow(0 0 80px rgba(255,40,140,.5));
+  animation: namePulse 2.8s ease-in-out infinite, shimmer 4s linear infinite;
+  background-size: 200% 200%;
+  display: block;
+  line-height: 1;
+}
+@keyframes nameFloat {
+  0%,100% { transform: translate(-50%,-50%) translateY(0px); }
+  50%      { transform: translate(-50%,-50%) translateY(-8px); }
+}
+@keyframes namePulse {
+  0%,100% { filter: drop-shadow(0 0 25px rgba(255,80,170,.7)) drop-shadow(0 0 60px rgba(255,40,140,.3)); }
+  50%     { filter: drop-shadow(0 0 55px rgba(255,110,190,1)) drop-shadow(0 0 130px rgba(255,60,160,.7)); }
+}
+@keyframes shimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.sname-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(.65rem, 1.6vw, .9rem);
+  letter-spacing: .55em;
+  color: rgba(255,180,215,.45);
+  margin-top: .5rem;
+  display: block;
+  text-transform: uppercase;
+  animation: fadeBreath 3.5s ease-in-out infinite;
+}
+@keyframes fadeBreath {
+  0%,100% { opacity:.35; } 50% { opacity:.75; }
+}
+#cursor svg{filter:drop-shadow(0 0 6px #ff44aa);}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="sandra-name">
+  <span class="sname">Sandra</span>
+  <span class="sname-sub">forever in bloom</span>
+</div>
+
+<div id="title">✦ bloom ✦</div>
+
+<div id="tabs">
+  <div class="tab active" onclick="setMode(0)">🌸 Bloom</div>
+  <div class="tab"        onclick="setMode(1)">🧬 DNA</div>
+</div>
+
+<div id="cursor">
+  <svg width="18" height="16" viewBox="0 0 18 16">
+    <path d="M9 15S1 9 1 4.5A4 4 0 0 1 9 3A4 4 0 0 1 17 4.5C17 9 9 15 9 15Z" fill="#ff3399"/>
+  </svg>
+</div>
+
+<script>
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const titleEl=document.getElementById('title');
+const cursorEl=document.getElementById('cursor');
+
+let W=canvas.width=innerWidth, H=canvas.height=innerHeight;
+let time=0, mode=0, modeTime=0;
+let mx=W/2,my=H/2;
+const TAU=Math.PI*2;
+const CX=()=>W/2, CY=()=>H/2;
+
+const TITLES=['✦ bloom ✦','✦ dna helix ✦'];
+
+function rand(a,b){return a+(b-a)*Math.random();}
+
+function heartXY(t,s=1){
+  const si=Math.sin(t);
+  return{
+    x:16*si*si*si*s,
+    y:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*s
+  };
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODE 0 — BLOOMING FLOWER HEART
+   Heart petals unfurl one by one, each petal is a curved
+   bezier that grows from the center, rotates into place,
+   then glows. Layers of petals build into a full heart.
+═══════════════════════════════════════════════════════════ */
+
+const BLOOM_PETALS=60;
+const bloom={
+  petals:[],
+  innerParticles:[],
+  pollenPts:[],
+  phase:0  // 0=growing 1=full 2=shedding
+};
+
+function initBloom(){
+  bloom.phase=0; bloom.petals=[];
+  bloom.innerParticles=[]; bloom.pollenPts=[];
+  for(let i=0;i<BLOOM_PETALS;i++){
+    const t=(i/BLOOM_PETALS)*TAU;
+    const hp=heartXY(t, 1);
+    bloom.petals.push({
+      t, tx:hp.x, ty:hp.y,
+      born: i/BLOOM_PETALS * 3.5,   // staggered birth time
+      openProgress:0,
+      hue: 290 + (i/BLOOM_PETALS)*90,
+      size: 6 + rand(0,6),
+      layer: Math.floor(i/BLOOM_PETALS*3),
+      phase: rand(0,TAU),
+      spd: rand(.5,1.2)
+    });
+    // pollen
+    if(i%3===0) bloom.pollenPts.push({
+      angle:rand(0,TAU), r:rand(20,80),
+      vr:rand(-.3,.3), va:rand(.005,.02),
+      hue:rand(40,70), sz:rand(1,3), life:1,
+      phase:rand(0,TAU)
+    });
+  }
+}
+
+function drawBloom(){
+  const S=Math.min(W,H)*0.023;
+  const beat=1+.04*Math.abs(Math.sin(modeTime*2.2));
+
+  // Draw each petal
+  bloom.petals.forEach((p,i)=>{
+    const age=modeTime-p.born;
+    if(age<0) return;
+    p.openProgress=Math.min(1, age/1.2);
+    const op=p.openProgress;
+    if(op<.01) return;
+
+    const finalX=CX()+p.tx*S*beat;
+    const finalY=CY()+p.ty*S*beat;
+
+    // Petal grows from center out
+    const cx2=lerp(CX(), finalX, op);
+    const cy2=lerp(CY(), finalY, op);
+
+    const sz=p.size*(S/12)*op*(1+.15*Math.sin(modeTime*p.spd+p.phase));
+    const hue=p.hue+20*Math.sin(modeTime*.3+p.phase);
+    const alpha=Math.min(1, op*1.5)*(.7+.3*Math.sin(modeTime*.8+p.phase));
+
+    // Outer bloom halo
+    const g1=ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,sz*4);
+    g1.addColorStop(0,`hsla(${hue},100%,80%,${alpha*.2})`);
+    g1.addColorStop(.5,`hsla(${hue+20},100%,65%,${alpha*.08})`);
+    g1.addColorStop(1,'transparent');
+    ctx.beginPath(); ctx.arc(cx2,cy2,sz*4,0,TAU);
+    ctx.fillStyle=g1; ctx.fill();
+
+    // Petal shape — two bezier curves making a leaf
+    ctx.save();
+    ctx.translate(cx2,cy2);
+    const angle=Math.atan2(p.ty,p.tx)+TAU*.25;
+    ctx.rotate(angle);
+
+    // Petal body
+    const pw=sz*.55, pl=sz*1.3;
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.bezierCurveTo(-pw,-pl*.4,-pw*.6,-pl,0,-pl);
+    ctx.bezierCurveTo(pw*.6,-pl,pw,-pl*.4,0,0);
+    const pg=ctx.createLinearGradient(0,0,0,-pl);
+    pg.addColorStop(0,`hsla(${hue},100%,72%,${alpha})`);
+    pg.addColorStop(.4,`hsla(${hue+15},100%,82%,${alpha})`);
+    pg.addColorStop(1,`hsla(${hue-10},100%,60%,${alpha*.7})`);
+    ctx.fillStyle=pg;
+    ctx.shadowBlur=sz*2; ctx.shadowColor=`hsl(${hue},100%,70%)`;
+    ctx.fill(); ctx.shadowBlur=0;
+
+    // Petal vein
+    ctx.beginPath();
+    ctx.moveTo(0,0); ctx.lineTo(0,-pl*.85);
+    ctx.strokeStyle=`hsla(${hue+30},100%,90%,${alpha*.4})`;
+    ctx.lineWidth=.5; ctx.stroke();
+    ctx.restore();
+
+    // Stamens at full bloom
+    if(op>.8){
+      const sCount=3;
+      for(let s=0;s<sCount;s++){
+        const sa=angle+(s-1)*.3;
+        const sl=sz*(op-.8)*2.5;
+        const ex=cx2+Math.cos(sa)*sl, ey=cy2+Math.sin(sa)*sl;
+        ctx.beginPath(); ctx.moveTo(cx2,cy2); ctx.lineTo(ex,ey);
+        ctx.strokeStyle=`hsla(${hue+40},100%,85%,${alpha*.5})`;
+        ctx.lineWidth=.8; ctx.stroke();
+        ctx.beginPath(); ctx.arc(ex,ey,1.5*(op-.8)*3,0,TAU);
+        ctx.fillStyle=`hsla(${50},100%,85%,${alpha})`;
+        ctx.fill();
+      }
+    }
+  });
+
+  // Center glow
+  const cg=ctx.createRadialGradient(CX(),CY(),0,CX(),CY(),S*8);
+  cg.addColorStop(0,`hsla(${320+20*Math.sin(modeTime*.3)},100%,90%,.25)`);
+  cg.addColorStop(.3,`hsla(${300+25*Math.sin(modeTime*.4)},100%,65%,.1)`);
+  cg.addColorStop(1,'transparent');
+  ctx.beginPath(); ctx.arc(CX(),CY(),S*8,0,TAU);
+  ctx.fillStyle=cg; ctx.fill();
+
+  // Floating pollen
+  bloom.pollenPts.forEach(p=>{
+    p.angle+=p.va; p.r+=p.vr;
+    if(p.r<10||p.r>150){p.vr*=-1;}
+    const px2=CX()+Math.cos(p.angle)*p.r*S/12;
+    const py2=CY()+Math.sin(p.angle)*p.r*S/12;
+    ctx.beginPath(); ctx.arc(px2,py2,p.sz*(1+.3*Math.sin(modeTime+p.phase)),0,TAU);
+    ctx.fillStyle=`hsla(${p.hue},100%,85%,${.5+.3*Math.sin(modeTime*1.2+p.phase)})`;
+    ctx.shadowBlur=8; ctx.shadowColor=`hsl(${p.hue},100%,80%)`;
+    ctx.fill(); ctx.shadowBlur=0;
+  });
+
+  // Shed petals drifting down
+  if(modeTime>5){
+    const shedProgress=Math.min(1,(modeTime-5)/4);
+    bloom.petals.forEach((p,i)=>{
+      if(Math.random()>.97){
+        bloom.innerParticles.push({
+          x:CX()+p.tx*(Math.min(W,H)*.023),
+          y:CY()+p.ty*(Math.min(W,H)*.023),
+          vx:rand(-1,1), vy:rand(.5,2),
+          rot:rand(0,TAU), rotV:rand(-.03,.03),
+          sz:rand(3,8), hue:p.hue, life:1,
+          dec:rand(.004,.01)
+        });
+      }
+    });
+  }
+  for(let i=bloom.innerParticles.length-1;i>=0;i--){
+    const p=bloom.innerParticles[i];
+    p.life-=p.dec; p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotV; p.vy+=.02;
+    if(p.life<=0||p.y>H+50){bloom.innerParticles.splice(i,1);continue;}
+    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+    ctx.globalAlpha=p.life;
+    const pw2=p.sz*.5, pl2=p.sz;
+    ctx.beginPath(); ctx.moveTo(0,0);
+    ctx.bezierCurveTo(-pw2,-pl2*.4,-pw2*.6,-pl2,0,-pl2);
+    ctx.bezierCurveTo(pw2*.6,-pl2,pw2,-pl2*.4,0,0);
+    ctx.fillStyle=`hsl(${p.hue},100%,72%)`; ctx.fill();
+    ctx.globalAlpha=1; ctx.restore();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODE 1 — DNA HELIX HEART
+   Two helical strands twist around the heart's outline path.
+   Base pairs connect them. Glowing nucleotides pulse.
+═══════════════════════════════════════════════════════════ */
+
+const DNA_STEPS=200;
+const dna={
+  nucleotides:[],
+  basePairs:[],
+  floatingBases:[],
+};
+
+function initDNA(){
+  dna.nucleotides=[]; dna.basePairs=[]; dna.floatingBases=[];
+  // Pre-compute heart path points
+  for(let i=0;i<DNA_STEPS;i++){
+    const t=(i/DNA_STEPS)*TAU;
+    const hp=heartXY(t,1);
+    const hue1=180+(i/DNA_STEPS)*120;  // strand A: cyan→purple
+    const hue2=hue1+180;               // strand B: complement
+    dna.nucleotides.push({t, hx:hp.x, hy:hp.y, hue1, hue2,
+      phase:rand(0,TAU), spd:rand(.5,1.5)});
+    if(i%5===0) dna.floatingBases.push({
+      x:rand(-W,W), y:rand(-H,H), vx:rand(-.2,.2), vy:rand(-.2,.2),
+      hue:hue1, sz:rand(1,3), phase:rand(0,TAU)
+    });
+  }
+}
+
+function drawDNA(){
+  const S=Math.min(W,H)*0.023;
+  const beat=1+.03*Math.abs(Math.sin(modeTime*2.5));
+  const spin=modeTime*.8;   // helix rotation speed
+
+  // Draw base pairs first (behind strands)
+  ctx.globalAlpha=.5;
+  for(let i=0;i<dna.nucleotides.length;i+=3){
+    const n=dna.nucleotides[i];
+    const fx=CX()+n.hx*S*beat, fy=CY()+n.hy*S*beat;
+    // Normal direction for offset
+    const next=dna.nucleotides[(i+1)%dna.nucleotides.length];
+    const prev=dna.nucleotides[(i-1+dna.nucleotides.length)%dna.nucleotides.length];
+    const nx=-(next.hy-prev.hy), ny=(next.hx-prev.hx);
+    const nl=Math.sqrt(nx*nx+ny*ny)||1;
+    const off=12*S/14*Math.sin(spin+(i/DNA_STEPS)*TAU*4);
+    const ax=fx+(nx/nl)*off, ay=fy+(ny/nl)*off;
+    const bx=fx-(nx/nl)*off, by=fy-(ny/nl)*off;
+
+    // Base pair ladder rung
+    ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by);
+    const grad=ctx.createLinearGradient(ax,ay,bx,by);
+    grad.addColorStop(0,`hsl(${n.hue1},100%,75%)`);
+    grad.addColorStop(.5,`hsl(${n.hue1+30},100%,90%)`);
+    grad.addColorStop(1,`hsl(${n.hue2},100%,75%)`);
+    ctx.strokeStyle=grad; ctx.lineWidth=1.5;
+    ctx.shadowBlur=4; ctx.shadowColor=`hsl(${n.hue1},100%,70%)`;
+    ctx.stroke(); ctx.shadowBlur=0;
+  }
+  ctx.globalAlpha=1;
+
+  // Draw strand A & B paths
+  for(let strand=0;strand<2;strand++){
+    ctx.beginPath();
+    let first=true;
+    dna.nucleotides.forEach((n,i)=>{
+      const fx=CX()+n.hx*S*beat, fy=CY()+n.hy*S*beat;
+      const next=dna.nucleotides[(i+1)%dna.nucleotides.length];
+      const prev=dna.nucleotides[(i-1+dna.nucleotides.length)%dna.nucleotides.length];
+      const nx2=-(next.hy-prev.hy), ny2=(next.hx-prev.hx);
+      const nl=Math.sqrt(nx2*nx2+ny2*ny2)||1;
+      const off=12*S/14*Math.sin(spin+(i/DNA_STEPS)*TAU*4)*(strand===0?1:-1);
+      const px=fx+(nx2/nl)*off, py=fy+(ny2/nl)*off;
+      if(first){ctx.moveTo(px,py);first=false;}else ctx.lineTo(px,py);
+    });
+    ctx.closePath();
+    const hueA=strand===0?190:350;
+    ctx.strokeStyle=`hsla(${hueA+30*Math.sin(modeTime*.2)},100%,70%,.8)`;
+    ctx.lineWidth=2.5;
+    ctx.shadowBlur=12; ctx.shadowColor=`hsla(${hueA},100%,65%,.7)`;
+    ctx.stroke(); ctx.shadowBlur=0;
+
+    // Nucleotide dots
+    dna.nucleotides.forEach((n,i)=>{
+      if(i%2!==strand) return;
+      const fx=CX()+n.hx*S*beat, fy=CY()+n.hy*S*beat;
+      const next=dna.nucleotides[(i+1)%dna.nucleotides.length];
+      const prev=dna.nucleotides[(i-1+dna.nucleotides.length)%dna.nucleotides.length];
+      const nx2=-(next.hy-prev.hy), ny2=(next.hx-prev.hx);
+      const nl=Math.sqrt(nx2*nx2+ny2*ny2)||1;
+      const off=12*S/14*Math.sin(spin+(i/DNA_STEPS)*TAU*4)*(strand===0?1:-1);
+      const px=fx+(nx2/nl)*off, py=fy+(ny2/nl)*off;
+      const hue=strand===0?n.hue1:n.hue2;
+      const pulse=1+.3*Math.sin(modeTime*n.spd+n.phase);
+      const g2=ctx.createRadialGradient(px,py,0,px,py,4*pulse*S/14);
+      g2.addColorStop(0,`hsl(${hue},100%,95%)`);
+      g2.addColorStop(.4,`hsl(${hue},100%,70%)`);
+      g2.addColorStop(1,'transparent');
+      ctx.beginPath(); ctx.arc(px,py,4*pulse*S/14,0,TAU);
+      ctx.fillStyle=g2;
+      ctx.shadowBlur=8; ctx.shadowColor=`hsl(${hue},100%,70%)`;
+      ctx.fill(); ctx.shadowBlur=0;
+    });
+  }
+
+  // Floating DNA bases in background
+  dna.floatingBases.forEach(b=>{
+    b.x+=b.vx; b.y+=b.vy;
+    if(b.x<-50)b.x=W+40; if(b.x>W+50)b.x=-40;
+    if(b.y<-50)b.y=H+40; if(b.y>H+50)b.y=-40;
+    ctx.beginPath(); ctx.arc(b.x,b.y,b.sz*(1+.2*Math.sin(modeTime+b.phase)),0,TAU);
+    ctx.fillStyle=`hsla(${b.hue},80%,72%,${.1+.08*Math.sin(modeTime+b.phase)})`;
+    ctx.fill();
+  });
+
+  // Central glow
+  const cg=ctx.createRadialGradient(CX(),CY(),0,CX(),CY(),S*6);
+  cg.addColorStop(0,`hsla(${200+40*Math.sin(modeTime*.3)},100%,80%,.15)`);
+  cg.addColorStop(1,'transparent');
+  ctx.beginPath(); ctx.arc(CX(),CY(),S*6,0,TAU); ctx.fillStyle=cg; ctx.fill();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SHARED FX
+═══════════════════════════════════════════════════════════ */
+
+// Background aurora
+function drawAurora(){
+  const colors=[[280,300],[310,340],[200,230]];
+  const c=colors[mode];
+  for(let i=0;i<3;i++){
+    const y=H*(.15+i*.28);
+    const hue=c[0]+rand(0,c[1]-c[0]);
+    const alpha=.025+.015*Math.sin(modeTime*.2+i);
+    const g=ctx.createLinearGradient(0,0,W,0);
+    g.addColorStop(0,'transparent');
+    g.addColorStop(.3,`hsla(${hue},100%,65%,${alpha})`);
+    g.addColorStop(.5,`hsla(${hue+25},100%,72%,${alpha*1.8})`);
+    g.addColorStop(.7,`hsla(${hue},100%,65%,${alpha})`);
+    g.addColorStop(1,'transparent');
+    ctx.beginPath(); ctx.moveTo(0,y);
+    for(let x=0;x<=W;x+=8){
+      ctx.lineTo(x,y+Math.sin((x/W)*Math.PI*3+modeTime*.35+i)*35);
+    }
+    ctx.strokeStyle=g;
+    ctx.lineWidth=22+10*Math.sin(modeTime*.25+i);
+    ctx.stroke();
+  }
+}
+
+// Stars
+const stars=Array.from({length:180},()=>({
+  x:rand(0,1), y:rand(0,1),
+  sz:rand(.3,1.6), hue:rand(180,330),
+  phase:rand(0,TAU), spd:rand(.3,1.5)
+}));
+function drawStars(){
+  stars.forEach(s=>{
+    const a=.3+.3*Math.sin(modeTime*s.spd+s.phase);
+    ctx.beginPath(); ctx.arc(s.x*W,s.y*H,s.sz,0,TAU);
+    ctx.fillStyle=`hsla(${s.hue},60%,90%,${a})`; ctx.fill();
+  });
+}
+
+// Mouse trail
+const trail=[];
+function addTrail(x,y){
+  for(let i=0;i<2;i++) trail.push({
+    x,y,vx:rand(-.5,.5),vy:rand(-.5,.5),
+    life:1,dec:.04+rand(0,.03),
+    sz:.5+rand(0,2), hue:rand(290,370)
+  });
+}
+function drawTrail(){
+  for(let i=trail.length-1;i>=0;i--){
+    const t=trail[i];
+    t.life-=t.dec; t.x+=t.vx; t.y+=t.vy;
+    if(t.life<=0){trail.splice(i,1);continue;}
+    ctx.beginPath(); ctx.arc(t.x,t.y,t.sz*t.life,0,TAU);
+    ctx.fillStyle=`hsla(${t.hue},100%,80%,${t.life})`;
+    ctx.shadowBlur=5; ctx.shadowColor=`hsl(${t.hue},100%,75%)`;
+    ctx.fill(); ctx.shadowBlur=0;
+  }
+}
+
+function lerp(a,b,t){return a+(b-a)*t;}
+
+/* ═══════════════════════════════════════════════════════════
+   INIT & SWITCH
+═══════════════════════════════════════════════════════════ */
+
+function setMode(m){
+  mode=m; modeTime=0;
+  titleEl.textContent=TITLES[m];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===m));
+  if(m===0) initBloom();
+  if(m===1) initDNA();
+}
+setMode(0);
+
+/* ═══════════════════════════════════════════════════════════
+   EVENTS
+═══════════════════════════════════════════════════════════ */
+window.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cursorEl.style.left=e.clientX+'px'; cursorEl.style.top=e.clientY+'px';
+  addTrail(e.clientX,e.clientY);
+});
+window.addEventListener('click',e=>{
+  // Burst on click
+  for(let i=0;i<50;i++) trail.push({
+    x:e.clientX, y:e.clientY,
+    vx:rand(-3,3), vy:rand(-3,3),
+    life:1, dec:rand(.015,.03),
+    sz:rand(1,4), hue:rand(290,370)
+  });
+});
+window.addEventListener('resize',()=>{
+  W=canvas.width=innerWidth; H=canvas.height=innerHeight;
+});
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATE
+═══════════════════════════════════════════════════════════ */
+function animate(){
+  requestAnimationFrame(animate);
+  time+=.016; modeTime+=.016;
+
+  ctx.fillStyle='rgba(2,0,10,.2)';
+  ctx.fillRect(0,0,W,H);
+
+  drawAurora();
+  drawStars();
+
+  if(mode===0) drawBloom();
+  if(mode===1) drawDNA();
+
+  drawTrail();
+}
+
+animate();
+</script>
+</body>
+</html>

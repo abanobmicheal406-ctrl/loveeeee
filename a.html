@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Journey of Us</title>
+    <style>
+        :root {
+            --card-color: #1e1b4b;
+            --bg-color: #030712;
+            --text-main: #f9fafb;
+            --text-accent: #fbbf24; 
+            --love-color: #f43f5e;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Georgia', serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Floating Background Particles */
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            pointer-events: none;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            100% { transform: translateY(-100vh) translateX(20vw); }
+        }
+
+        /* UI Intro */
+        .ui-intro {
+            text-align: center;
+            margin-bottom: 25px;
+            z-index: 5;
+            transition: opacity 1.5s ease;
+        }
+
+        /* Memory Grid */
+        .heart-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 50px);
+            grid-template-rows: repeat(7, 50px);
+            gap: 10px;
+            transition: opacity 1.5s ease;
+            z-index: 2;
+        }
+
+        .card { width: 50px; height: 50px; cursor: pointer; perspective: 1000px; }
+        .card-inner {
+            position: relative; width: 100%; height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; }
+        .card-back { background-color: var(--card-color); border: 1px solid #3730a3; box-shadow: 0 0 10px rgba(55, 48, 163, 0.5); }
+        .card-front { background-color: white; transform: rotateY(180deg); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .card-front img { width: 100%; height: 100%; object-fit: cover; }
+
+
+
+        #skipGameBtn {
+            position: absolute; bottom: 30px; background: rgba(255,255,255,0.05); border: 1px solid #334155;
+            color: #94a3b8; padding: 10px 25px; border-radius: 30px; cursor: pointer; z-index: 10;
+            font-size: 0.9rem; transition: 0.3s;
+        }
+        #skipGameBtn:hover { color: var(--text-accent); border-color: var(--text-accent); }
+
+        /* Presentation */
+        #presentation-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100; visibility: hidden; opacity: 0;
+            transition: opacity 3s ease;
+            background: radial-gradient(circle at center, rgba(15, 23, 42, 0.7) 0%, rgba(3, 7, 18, 1) 100%);
+        }
+        #presentation-overlay.active { visibility: visible; opacity: 1; }
+
+        .slide {
+            position: absolute; font-size: 2.5rem; font-style: italic; font-weight: 300;
+            text-align: center; opacity: 0; transition: opacity 2.5s ease;
+            width: 80%; z-index: 101; line-height: 1.7; color: #f8fafc;
+            text-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .slide.show { opacity: 1; }
+
+        #photo-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            opacity: 0; transition: opacity 6s ease;
+            z-index: -1; filter: brightness(0.2) grayscale(0.3) blur(8px);
+        }
+        #photo-bg img { width: 100%; height: 100%; object-fit: cover; }
+
+        .proposal-btns {
+            display: none; gap: 30px; margin-top: 60px; justify-content: center;
+        }
+        .proposal-btns.show { display: flex; animation: fadeIn 2s forwards; }
+
+        button.choice {
+            padding: 16px 50px; font-size: 1.3rem; border-radius: 50px;
+            border: none; cursor: pointer; font-family: 'Georgia', serif; transition: 0.4s;
+        }
+        #yesBtn { background: var(--love-color); color: white; box-shadow: 0 0 25px rgba(244, 63, 94, 0.4); }
+        #noBtn { background: #1f2937; color: #9ca3af; border: 1px solid #374151; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .confetti {
+            position: fixed; top: -20px; user-select: none; pointer-events: none;
+            z-index: 200; animation: fall linear forwards;
+        }
+        @keyframes fall { to { transform: translateY(105vh) rotate(720deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="particles-container"></div>
+
+    <div class="ui-intro" id="intro-text">
+        <h1 style="color: var(--love-color); font-size: 2.5rem; margin-bottom: 10px;">The Pieces of Us</h1>
+        <p style="color: #94a3b8; font-size: 1.2rem;">Before we celebrate the beauty of today...<br>let's find the moments that brought us here.</p>
+    </div>
+
+    <div class="heart-grid" id="grid"></div>
+    <button id="skipGameBtn">Skip to the Surprise ➔</button>
+
+    <div id="presentation-overlay">
+        <div id="photo-bg"></div>
+        
+        <div class="slide">Close your eyes for just a second...</div>
+        <div class="slide">Think about everything we've shared since last year.</div>
+        <div class="slide">The quiet mornings, the loud laughs, the random texts...</div>
+        <div class="slide">Every moment was a stitch in the fabric of our story.</div>
+        <div class="slide">You have this incredible way of making the ordinary feel magic.</div>
+        <div class="slide">You are my favorite person, my safest place, and my greatest adventure.</div>
+        <div class="slide">I've watched you grow, and I've watched you shine.</div>
+        <div class="slide">And I am so incredibly lucky to be by your side for all of it.</div>
+        <div class="slide">The world is a vast place, but it feels perfect whenever you're near.</div>
+        <div class="slide">So today, we don't just celebrate how long you've been on Earth.</div>
+        <div class="slide">We celebrate the beautiful light you bring to me every single day.</div>
+        <div class="slide">Are you ready to see what the next chapter holds?</div>
+        
+        <div class="slide" id="finalSlide">
+            <div id="final-text">
+                <span style="font-size: 1.4rem; display: block; margin-bottom: 20px; color: var(--text-accent); letter-spacing: 4px; font-style: normal;">MY WHOLE HEART</span>
+                Today is your day, and it's going to be as wonderful as you are.<br>
+                Ready to begin the celebration? ❤️
+            </div>
+            <div class="proposal-btns" id="btnContainer">
+                <button class="choice" id="yesBtn">YES, ALWAYS!</button>
+                <button class="choice" id="noBtn">Wait...</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- AUDIO ENGINE ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let ambientInterval;
+        let birthdayPlaying = false;
+
+        function playNote(freq, duration, type = 'sine', volume = 0.05) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playDeepAmbient() {
+            const scale = [261.63, 329.63, 392.00, 440.00, 523.25]; 
+            ambientInterval = setInterval(() => {
+                if (!birthdayPlaying) {
+                    const freq = scale[Math.floor(Math.random() * scale.length)];
+                    playNote(freq, 6, 'sine', 0.03);
+                }
+            }, 3000);
+        }
+
+        function playBirthdaySongLoop() {
+            birthdayPlaying = true;
+            clearInterval(ambientInterval); 
+            const notes = [
+                [261, 0.4], [261, 0.2], [293, 0.6], [261, 0.6], [349, 0.6], [329, 1.2],
+                [261, 0.4], [261, 0.2], [293, 0.6], [261, 0.6], [392, 0.6], [349, 1.2],
+                [261, 0.4], [261, 0.2], [523, 0.6], [440, 0.6], [349, 0.6], [329, 0.6], [293, 0.6],
+                [466, 0.4], [466, 0.2], [440, 0.6], [349, 0.6], [392, 0.6], [349, 1.2]
+            ];
+            let total = 0;
+            notes.forEach(n => {
+                setTimeout(() => playNote(n[0], n[1], 'triangle', 0.08), total);
+                total += n[1] * 1100;
+            });
+            setTimeout(playBirthdaySongLoop, total + 1000);
+        }
+
+        // --- BACKGROUND PARTICLES ---
+        const pContainer = document.getElementById('particles-container');
+        for(let i=0; i<30; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.width = p.style.height = Math.random() * 4 + 2 + 'px';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.top = Math.random() * 100 + 'vh';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            pContainer.appendChild(p);
+        }
+
+        // --- GAME LOGIC ---
+        const grid = document.getElementById('grid');
+        const overlay = document.getElementById('presentation-overlay');
+        const photoBg = document.getElementById('photo-bg');
+        const btnContainer = document.getElementById('btnContainer');
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const introText = document.getElementById('intro-text');
+
+        // =============================================
+        //   ADD YOUR 18 PHOTO URLS HERE
+        // =============================================
+        const myPhotos = [
+            "photo1.jpg",
+            "photo2.jpg",
+            "photo4.jpg",
+            "photo6.jpg",
+            "photo7.jpg",
+            "photo9.jpg",
+            "photo30.jpg",
+            "photo31.jpg",
+            "photo38.jpg",
+            "photo27.jpg",
+            "photo29.jpg",
+            "photo25.jpg",
+            "photo26.jpg",
+            "photo34.jpg",
+            "photo37.jpg",
+            "photo28.jpg",
+            "photo39.jpg",
+            "photo43.JPG",
+        ];
+        // =============================================
+        
+        const heartIndices = [2,3,5,6,10,11,12,13,14,15,16,18,19,20,21,22,23,24,25,26,28,29,30,31,32,33,34,38,39,40,41,42,48,49,50,58];
+
+        let flipped = [];
+        let matched = 0;
+
+       function buildGame(uniqueImages) {
+    grid.innerHTML = '';
+    photoBg.innerHTML = '';
+    flipped = [];
+    matched = 0;
+
+    // FIXED: duplicate images correctly
+    const gameImages = [...uniqueImages, ...uniqueImages]
+        .sort(() => Math.random() - 0.5);
+
+    for (let i = 0; i < 63; i++) {
+
+        const cell = document.createElement('div');
+
+        if (heartIndices.includes(i)) {
+
+            const imgIdx = heartIndices.indexOf(i);
+
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            card.dataset.val = gameImages[imgIdx];
+
+            card.innerHTML = `
+            <div class="card-inner">
+                <div class="card-back"></div>
+
+                <div class="card-front">
+                    <img src="${gameImages[imgIdx]}" 
+                    onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
+                </div>
+            </div>
+            `;
+
+            card.onclick = () => {
+
+                if(audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                if (
+                    flipped.length < 2 &&
+                    !card.classList.contains('flipped')
+                ) {
+
+                    card.classList.add('flipped');
+                    flipped.push(card);
+
+                    if(flipped.length === 2){
+
+                        if(
+                            flipped[0].dataset.val ===
+                            flipped[1].dataset.val
+                        ){
+
+                            playNote(523.25,0.3,'sine',0.05);
+
+                            matched += 2;
+                            flipped = [];
+
+                            if(matched === heartIndices.length){
+                                startPresentation();
+                            }
+
+                        } else {
+
+                            setTimeout(()=>{
+                                flipped.forEach(c=>{
+                                    c.classList.remove('flipped');
+                                });
+
+                                flipped = [];
+
+                            },800);
+                        }
+                    }
+                }
+            };
+
+            cell.appendChild(card);
+        }
+
+        grid.appendChild(cell);
+    }
+
+
+    // Background photos
+    uniqueImages.forEach(src=>{
+
+        const img=document.createElement('img');
+
+        img.src=src;
+
+        img.onerror=()=>{
+            img.remove();
+        };
+
+        photoBg.appendChild(img);
+    });
+}
+        buildGame(myPhotos);
+
+        const skipBtn = document.getElementById('skipGameBtn');
+        skipBtn.onclick = () => {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            startPresentation();
+        };
+
+        // Teleporting "Wait..." button - even more sensitive
+        const moveNo = () => {
+            const x = Math.random() * (window.innerWidth - 150);
+            const y = Math.random() * (window.innerHeight - 50);
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+            noBtn.style.zIndex = "1000";
+        };
+        noBtn.onmouseover = moveNo;
+        noBtn.onclick = moveNo;
+
+        function startPresentation() {
+            grid.style.opacity = "0";
+            skipBtn.style.opacity = "0";
+            introText.style.opacity = "0";
+            playDeepAmbient(); 
+            setTimeout(() => { 
+                skipBtn.style.display = "none";
+                introText.style.display = "none";
+                overlay.classList.add('active'); 
+                runSlides(); 
+            }, 2000);
+        }
+
+        async function runSlides() {
+            const slides = document.querySelectorAll('.slide');
+            for (let i = 0; i < slides.length; i++) {
+                if (i === slides.length - 1) photoBg.style.opacity = "1";
+                slides[i].classList.add('show');
+                if (i === slides.length - 1) {
+                    setTimeout(() => { btnContainer.classList.add('show'); btnContainer.style.display = 'flex'; }, 2000);
+                    return; 
+                }
+                await new Promise(res => setTimeout(res, 4500)); 
+                slides[i].classList.remove('show');
+                await new Promise(res => setTimeout(res, 2500)); 
+            }
+        }
+
+        yesBtn.onclick = () => {
+            btnContainer.style.display = 'none';
+            document.getElementById('final-text').innerHTML = "HAPPY BIRTHDAY!<br><span style='font-size: 1.5rem; color: var(--love-color); font-style: normal; text-shadow: 0 0 10px rgba(244,63,94,0.3);'>I love you more than words can say. Now, let's make this your best year yet!</span>";
+            photoBg.style.filter = "brightness(0.7) blur(0px)";
+            playBirthdaySongLoop();
+            setInterval(createConfetti, 100);
+        };
+
+        function createConfetti() {
+            const symbols = ['❤️', '✨', '🎉', '💖', '🎈', '🌹'];
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.fontSize = Math.random() * 20 + 20 + 'px';
+            confetti.style.animationDuration = Math.random() * 3 + 4 + 's';
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 7000);
+        }
+    </script>
+</body>
+</html>

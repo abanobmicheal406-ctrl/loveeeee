@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unfold My Heart</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fce4ec;
+            font-family: 'Georgia', serif;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+
+        /* The Letter Container */
+        .envelope {
+            width: 300px;
+            height: 300px;
+            background: #ffffff;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .envelope.open {
+            transform: scale(1.5);
+        }
+
+        /* Folding Layers */
+        .flap {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ff80ab;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: all 0.8s ease-in-out;
+            backface-visibility: hidden;
+            z-index: 5;
+        }
+
+        /* Fold Animations */
+        .open .flap-top { transform: translateY(-100%) rotateX(180deg); }
+        .open .flap-bottom { transform: translateY(100%) rotateX(-180deg); }
+        .open .flap-left { transform: translateX(-100%) rotateY(-180deg); }
+        .open .flap-right { transform: translateX(100%) rotateY(180deg); }
+
+        .flap-top { clip-path: polygon(0 0, 100% 0, 50% 50%); background: #f06292; }
+        .flap-bottom { clip-path: polygon(0 100%, 100% 100%, 50% 50%); background: #ec407a; }
+        .flap-left { clip-path: polygon(0 0, 0 100%, 50% 50%); background: #e91e63; }
+        .flap-right { clip-path: polygon(100% 0, 100% 100%, 50% 50%); background: #c2185b; }
+
+        /* Secret Content Inside */
+        .content {
+            text-align: center;
+            padding: 20px;
+            color: #880e4f;
+            opacity: 0;
+            transition: opacity 0.5s 0.6s;
+        }
+
+        .open .content { opacity: 1; }
+
+        .heart {
+            font-size: 50px;
+            color: #d81b60;
+            animation: beat 1s infinite alternate;
+        }
+
+        @keyframes beat {
+            to { transform: scale(1.2); }
+        }
+
+        .hint {
+            position: absolute;
+            bottom: -50px;
+            font-size: 0.8rem;
+            color: #ad1457;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="envelope" id="envelope" onclick="this.classList.toggle('open')">
+        <div class="flap flap-top"></div>
+        <div class="flap flap-bottom"></div>
+        <div class="flap flap-left"></div>
+        <div class="flap flap-right"></div>
+
+        <div class="content">
+            <div class="heart">❤️</div>
+            <h3>To My Favorite Human</h3>
+            <p>Every layer of you is beautiful.</p>
+            <p style="font-size: 0.8rem;">Happy Birthday❤️❤️❤️</p>
+        </div>
+
+        <div class="hint">CLICK TO UNFOLD</div>
+    </div>
+
+</body>
+</html>

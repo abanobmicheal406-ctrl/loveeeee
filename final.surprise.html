@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Sandra</title>
+    <style>
+        :root {
+            --gold: #fbbf24;
+            --pink: #f472b6;
+            --bg: #020617;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: var(--bg);
+            color: white;
+            font-family: 'Georgia', serif;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Sparkles Background */
+        #canvas-bg {
+            position: fixed; inset: 0; z-index: -1;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+        }
+
+        header {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        header h1 {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 3.5rem;
+            color: var(--gold);
+            text-shadow: 0 0 20px var(--gold);
+            margin: 0;
+        }
+
+        /* Gift Grid */
+        .gift-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .gift-box {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--gold), #d97706);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.4s, box-shadow 0.4s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .gift-box:hover {
+            transform: translateY(-10px) rotate(3deg);
+            box-shadow: 0 15px 30px var(--gold);
+        }
+
+        /* The Surprise Content (Hidden inside gift) */
+        .content-card {
+            display: none;
+            background: white;
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Final Letter Section */
+        #final-letter {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 2s;
+            text-align: center;
+            line-height: 1.8;
+            font-size: 1.2rem;
+        }
+
+        .opened {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: 2px dashed var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-bg"></div>
+
+    <header>
+        <h1>Sandra's Birthday Surprises</h1>
+        <p>Tap each gift to reveal a piece of my heart...</p>
+    </header>
+
+    <div class="gift-container">
+        <div class="gift-box" onclick="openGift(this, 'You make every day brighter just by being you.')">🎁</div>
+        <div class="gift-box" onclick="openGift(this, 'I am so grateful for all our memories together.')">🎁</div>
+        <div class="gift-box" onclick="openGift(this, 'To the most beautiful soul I know...')">🎁</div>
+        <div class="gift-box" onclick="openGift(this, 'May this year be as wonderful as you are.')">🎁</div>
+    </div>
+
+    <div id="final-letter">
+        <h2 style="font-family: 'Brush Script MT', cursive; font-size: 2.5rem; color: var(--gold);">My Sandoura </h2>
+        <p>
+            Watching you grow and shine is the greatest gift I could ever ask for. 
+            You are kind, strong, and incredibly loved. Today we celebrate you, 
+            but I celebrate you every single day.
+        </p>
+        <p>Happy Birthday, my 7ok4a! ❤️</p>
+    </div>
+
+    <script>
+        let openedCount = 0;
+        const totalGifts = 4;
+
+        function openGift(element, message) {
+            if (element.classList.contains('opened')) return;
+
+            element.classList.add('opened');
+            element.innerHTML = `<div class="content-card" style="display:block">
+                                    <p style="font-size: 1rem; margin:0;">${message}</p>
+                                 </div>`;
+            
+            openedCount++;
+
+            if (openedCount === totalGifts) {
+                setTimeout(() => {
+                    const letter = document.getElementById('final-letter');
+                    letter.style.opacity = 1;
+                    letter.scrollIntoView({ behavior: 'smooth' });
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

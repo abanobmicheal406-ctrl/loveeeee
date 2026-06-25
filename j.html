@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sandra — With Love 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400;1,700&family=Cormorant+Garamond:ital,wght@1,300;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+
+body {
+  background: #04000a;
+  font-family: 'Cormorant Garamond', serif;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ══════════════════════════════════
+   MUSIC PLAYER (fixed)
+══════════════════════════════════ */
+.music-player {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(10,4,20,0.7);
+  border: 1px solid rgba(255,120,160,0.2);
+  border-radius: 50px;
+  padding: 10px 22px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+  animation: slideDown 1s cubic-bezier(0.34,1.4,0.64,1) both;
+}
+
+@keyframes slideDown {
+  from { opacity:0; transform: translateX(-50%) translateY(-30px); }
+  to   { opacity:1; transform: translateX(-50%) translateY(0); }
+}
+
+.music-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--r, rgba(255,60,100,0.85));
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+}
+.music-btn:hover { transform: scale(1.12); box-shadow: 0 0 16px rgba(255,60,100,0.5); }
+
+.music-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 140px;
+}
+
+.music-title {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(255,220,230,0.9);
+  white-space: nowrap;
+}
+
+.music-progress-wrap {
+  position: relative;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  cursor: pointer;
+  overflow: hidden;
+}
+.music-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #e8192c, #ff6b9d);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.5s linear;
+  pointer-events: none;
+}
+
+.music-vol {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.music-vol span { font-size: 13px; color: rgba(255,180,200,0.5); }
+.vol-slider {
+  width: 60px;
+  accent-color: #e8192c;
+  cursor: pointer;
+}
+
+/* Equaliser bars */
+.eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 18px;
+  opacity: 0.7;
+}
+.eq-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: #ff6b9d;
+  animation: eqBounce 0.6s ease-in-out infinite alternate;
+}
+.eq-bar:nth-child(1){height:6px; animation-delay:0s;}
+.eq-bar:nth-child(2){height:14px;animation-delay:0.1s;}
+.eq-bar:nth-child(3){height:10px;animation-delay:0.2s;}
+.eq-bar:nth-child(4){height:16px;animation-delay:0.05s;}
+.eq-bar:nth-child(5){height:8px; animation-delay:0.15s;}
+.eq.paused .eq-bar { animation-play-state: paused; }
+
+@keyframes eqBounce {
+  from { transform: scaleY(0.3); }
+  to   { transform: scaleY(1); }
+}
+
+/* Scroll dots nav */
+.scroll-nav {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 100;
+}
+.scroll-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid rgba(255,150,180,0.3);
+}
+.scroll-dot.active { background: #e8192c; transform: scale(1.3); box-shadow: 0 0 8px rgba(232,25,44,0.6); }
+
+/* ══════════════════════════════════
+   SECTION 1 — HERO
+══════════════════════════════════ */
+section {
+  height: 100vh;
+  scroll-snap-align: start;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-section {
+  background: radial-gradient(ellipse at 50% 40%, #1a0010 0%, #04000a 70%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  pointer-events: none;
+  animation: heroIn 1.2s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes heroIn {
+  from { opacity:0; transform: scale(0.9) translateY(20px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+
+.hero-eyebrow {
+  font-style: italic;
+  font-size: clamp(12px,1.8vw,16px);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,180,200,0.55);
+  margin-bottom: 10px;
+}
+
+.hero-name {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(72px,14vw,160px);
+  color: white;
+  line-height: 0.9;
+  animation: namePulse 1.6s ease-in-out infinite;
+  text-shadow:
+    0 0 30px rgba(255,100,140,1),
+    0 0 80px rgba(255,60,100,0.6),
+    0 0 150px rgba(255,30,80,0.3);
+}
+
+@keyframes namePulse {
+  0%,100% { text-shadow: 0 0 30px rgba(255,100,140,0.9), 0 0 80px rgba(255,60,100,0.5); }
+  50%      { text-shadow: 0 0 50px rgba(255,130,165,1), 0 0 120px rgba(255,80,120,0.8), 0 0 200px rgba(255,40,90,0.3); }
+}
+
+.hero-tagline {
+  font-style: italic;
+  font-size: clamp(14px,2vw,20px);
+  color: rgba(255,200,215,0.5);
+  letter-spacing: 0.18em;
+  margin-top: 18px;
+}
+
+.scroll-hint-hero {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: rgba(255,180,200,0.3);
+  animation: breathe 2s ease-in-out infinite;
+  z-index: 5;
+}
+.scroll-hint-hero .arrow {
+  width: 1px; height: 36px;
+  background: linear-gradient(to bottom, transparent, rgba(255,100,140,0.5));
+  animation: growLine 1.5s ease-in-out infinite;
+}
+@keyframes growLine {
+  0%,100%{transform:scaleY(0.4);opacity:0.4;} 50%{transform:scaleY(1);opacity:1;}
+}
+@keyframes breathe {
+  0%,100%{opacity:0.4;} 50%{opacity:0.9;}
+}
+
+canvas.bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ══════════════════════════════════
+   SECTION 2 — HEART
+══════════════════════════════════ */
+.heart-section {
+  background: #0a0005;
+  flex-direction: column;
+}
+
+.section-label {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,180,200,0.35);
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.heart-center {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+}
+
+.heart-center .name {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(36px,6vw,72px);
+  color: white;
+  animation: namePulse 1.4s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(255,100,140,0.9), 0 0 50px rgba(255,60,100,0.6);
+  margin-bottom: 4px;
+}
+.heart-center .sub {
+  font-style: italic;
+  font-size: clamp(12px,1.4vw,15px);
+  color: rgba(255,180,200,0.45);
+  letter-spacing: 0.2em;
+}
+
+.heart-modes {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 20;
+}
+.mode-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,120,160,0.2);
+  color: rgba(255,200,210,0.55);
+  padding: 6px 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: all 0.2s;
+}
+.mode-btn:hover,.mode-btn.active {
+  background: rgba(255,50,90,0.2);
+  border-color: rgba(255,100,140,0.5);
+  color: white;
+  box-shadow: 0 0 12px rgba(255,60,100,0.3);
+}
+.click-hint {
+  position: absolute;
+  bottom: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-style: italic;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: rgba(255,180,200,0.25);
+  z-index: 10;
+  white-space: nowrap;
+  animation: breathe 2.5s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════
+   SECTION 3 — STARRY NIGHT POEM
+══════════════════════════════════ */
+.sky-section {
+  background: #03000d;
+}
+
+.poem-card {
+  position: relative;
+  z-index: 10;
+  max-width: 480px;
+  width: 90%;
+  padding: 52px 44px;
+  text-align: center;
+  background: rgba(8,3,18,0.6);
+  border: 1px solid rgba(180,140,255,0.13);
+  border-radius: 4px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 80px rgba(0,0,0,0.6);
+  animation: cardIn 1s both;
+}
+@keyframes cardIn {
+  from { opacity:0; transform: translateY(30px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.poem-star-icon {
+  font-size: 30px;
+  display: block;
+  margin-bottom: 18px;
+  animation: twinkle 2s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%,100%{opacity:0.7;transform:scale(1)rotate(0deg);}
+  50%{opacity:1;transform:scale(1.18)rotate(8deg);}
+}
+
+.poem-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(32px,5vw,50px);
+  color: rgba(210,190,255,0.9);
+  margin-bottom: 24px;
+  text-shadow: 0 0 24px rgba(160,120,255,0.5);
+}
+
+.divider {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
+}
+.divider-line { flex:1; height:1px; background: linear-gradient(to right,transparent,rgba(180,140,255,0.3),transparent); }
+.divider-dot  { color:rgba(200,180,255,0.35); font-size:10px; }
+
+.poem-lines { list-style:none; display:flex; flex-direction:column; gap:14px; }
+
+.poem-line {
+  font-style: italic;
+  font-size: clamp(14px,1.8vw,18px);
+  color: rgba(220,210,255,0.82);
+  line-height: 1.65;
+  letter-spacing: 0.03em;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.poem-line.visible { opacity:1; transform:translateY(0); }
+
+.poem-signature {
+  margin-top: 32px;
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(24px,3.5vw,38px);
+  color: rgba(255,160,200,0.8);
+  text-shadow: 0 0 18px rgba(255,100,160,0.4);
+}
+
+.sky-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-style: italic;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: rgba(180,160,255,0.28);
+  z-index: 10;
+  white-space: nowrap;
+  animation: breathe 2.5s ease-in-out infinite;
+}
+</style>
+</head>
+<body>
+
+<!-- ══ MUSIC PLAYER ══ -->
+<div class="music-player" id="musicPlayer">
+  <button class="music-btn" id="playBtn" onclick="toggleMusic()">▶</button>
+  <div class="music-info">
+    <div class="music-title" id="musicTitle">♪ Perfect — Ed Sheeran</div>
+    <div class="music-progress-wrap" id="progressWrap" onclick="seekMusic(event)">
+      <div class="music-progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+  <div class="eq" id="eqBars">
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+  </div>
+  <div class="music-vol">
+    <span>♪</span>
+    <input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.05" value="0.5" oninput="setVolume(this.value)">
+  </div>
+</div>
+
+<!-- Scroll nav dots -->
+<div class="scroll-nav">
+  <div class="scroll-dot active" onclick="scrollTo(0)" title="Intro"></div>
+  <div class="scroll-dot" onclick="document.getElementById('heartSec').scrollIntoView({behavior:'smooth'})" title="Heart"></div>
+  <div class="scroll-dot" onclick="document.getElementById('skySec').scrollIntoView({behavior:'smooth'})" title="Poem"></div>
+</div>
+
+<!-- ══ SECTION 1: HERO ══ -->
+<section class="hero-section" id="heroSec">
+  <canvas class="bg-canvas" id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-eyebrow">A Gift for</div>
+    <div class="hero-name">Sandoura</div>
+    <div class="hero-tagline">— written in stars & heartbeats —</div>
+  </div>
+  <div class="scroll-hint-hero">
+    <div class="arrow"></div>
+    <span>scroll</span>
+  </div>
+</section>
+
+<!-- ══ SECTION 2: HEART ══ -->
+<section class="heart-section" id="heartSec">
+  <div class="section-label">♡ beating for you ♡</div>
+  <canvas class="bg-canvas" id="heartCanvas"></canvas>
+  <div class="heart-center">
+    <div class="name">Sandra</div>
+    <div class="sub">— with all my heart —</div>
+  </div>
+  <div class="click-hint">click to burst hearts</div>
+  <div class="heart-modes">
+    <button class="mode-btn active" onclick="setMode('pulse',this)">Pulse</button>
+    <button class="mode-btn" onclick="setMode('float',this)">Float</button>
+    <button class="mode-btn" onclick="setMode('explode',this)">Explode</button>
+    <button class="mode-btn" onclick="setMode('spiral',this)">Spiral</button>
+  </div>
+</section>
+
+<!-- ══ SECTION 3: STARRY SKY + POEM ══ -->
+<section class="sky-section" id="skySec">
+  <div class="section-label">✦ under the stars ✦</div>
+  <canvas class="bg-canvas" id="skyCanvas"></canvas>
+  <div class="poem-card">
+    <span class="poem-star-icon">✦</span>
+    <div class="poem-title">Under the Stars</div>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-dot">✦</span>
+      <div class="divider-line"></div>
+    </div>
+    <ul class="poem-lines" id="poemLines">
+      <li class="poem-line">Beneath a sky of endless light,</li>
+      <li class="poem-line">I found in you my favourite star —</li>
+      <li class="poem-line">the one I search for every night,</li>
+      <li class="poem-line">no matter near, no matter far.</li>
+      <li class="poem-line" style="margin-top:8px">You are the moon when days grow cold,</li>
+      <li class="poem-line">the warmth the darkest hours keep.</li>
+      <li class="poem-line">A love too wide, too deep to hold —</li>
+      <li class="poem-line">yet yours is mine, in wake and sleep.</li>
+    </ul>
+    <div class="poem-signature">Forever yours, Sandra ♡</div>
+  </div>
+  <div class="sky-hint">click the sky to wish upon a star ✦</div>
+</section>
+
+<script>
+// ════════════════════════════════════════
+//  MUSIC (Web Audio API — generative)
+// ════════════════════════════════════════
+let audioCtx, masterGain, isPlaying = false, musicNodes = [], animFrame;
+const SONGS = [
+  { title: '♪ Perfect — Ed Sheeran', key: 'E', bpm: 95 },
+  { title: '♪ All of Me — John Legend', key: 'F', bpm: 63 },
+  { title: '♪ Thinking Out Loud — Ed Sheeran', key: 'D', bpm: 79 },
+];
+let currentSong = 0;
+let songProgress = 0, songDuration = 180, songTimer;
+
+// Note frequencies
+const NOTES = { C:261.63, D:293.66, E:329.63, F:349.23, G:392, A:440, B:493.88 };
+function freq(note, oct=4) {
+  const base = NOTES[note[0]] || 440;
+  const sharp = note.includes('#') ? Math.pow(2,1/12) : 1;
+  return base * sharp * Math.pow(2, oct-4);
+}
+
+// Romantic chord progressions
+const PROGRESSIONS = {
+  E: [[freq('E'),freq('G',4),freq('B',4)],[freq('C',4),freq('E'),freq('G',4)],[freq('A',3),freq('C',4),freq('E')],[freq('B',3),freq('D',4),freq('F',4)]],
+  F: [[freq('F'),freq('A',4),freq('C',5)],[freq('D',4),freq('F'),freq('A',4)],[freq('B',3),freq('D',4),freq('F')],[freq('C',4),freq('E'),freq('G',4)]],
+  D: [[freq('D'),freq('F',4),freq('A',4)],[freq('G',3),freq('B',3),freq('D',4)],[freq('A',3),freq('C',4),freq('E')],[freq('B',3),freq('D',4),freq('F',4)]],
+};
+
+function initAudio(){
+  if(audioCtx) return;
+  audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.5;
+  const reverb = audioCtx.createConvolver();
+  const revLen = audioCtx.sampleRate * 2.5;
+  const revBuf = audioCtx.createBuffer(2, revLen, audioCtx.sampleRate);
+  for(let c=0;c<2;c++){const d=revBuf.getChannelData(c);for(let i=0;i<revLen;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/revLen,2);}
+  reverb.buffer = revBuf;
+  const reverbGain = audioCtx.createGain(); reverbGain.gain.value = 0.35;
+  masterGain.connect(reverb); reverb.connect(reverbGain); reverbGain.connect(audioCtx.destination);
+  masterGain.connect(audioCtx.destination);
+}
+
+function playNote(frequency, startTime, duration, type='sine', gain=0.12){
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = frequency;
+  g.gain.setValueAtTime(0, startTime);
+  g.gain.linearRampToValueAtTime(gain, startTime+0.08);
+  g.gain.exponentialRampToValueAtTime(0.001, startTime+duration);
+  osc.connect(g); g.connect(masterGain);
+  osc.start(startTime); osc.stop(startTime+duration+0.05);
+}
+
+function scheduleMusic(){
+  if(!isPlaying || !audioCtx) return;
+  const song = SONGS[currentSong];
+  const prog = PROGRESSIONS[song.key];
+  const beatLen = 60/song.bpm;
+  const now = audioCtx.currentTime;
+  const chordDur = beatLen * 4;
+
+  // Schedule 16 seconds of music at a time
+  for(let measure=0;measure<4;measure++){
+    const chord = prog[measure % prog.length];
+    const mStart = now + measure * chordDur;
+
+    // Melody (highest note variation)
+    const melody = [chord[2], chord[2]*9/8, chord[1]*2, chord[2], chord[0]*2];
+    melody.forEach((n,i) => {
+      playNote(n, mStart + i*beatLen, beatLen*0.8, 'sine', 0.08);
+    });
+
+    // Chords (pad)
+    chord.forEach(n => {
+      playNote(n, mStart, chordDur*0.9, 'triangle', 0.04);
+    });
+
+    // Bass
+    playNote(chord[0]*0.5, mStart, chordDur*0.85, 'sine', 0.14);
+    playNote(chord[0]*0.5, mStart+beatLen*2, beatLen*0.7, 'sine', 0.1);
+
+    // Soft ping arp
+    chord.forEach((n,i) => {
+      playNote(n*2, mStart + i*beatLen*0.5, beatLen*0.3, 'sine', 0.05);
+    });
+  }
+
+  // Reschedule
+  setTimeout(scheduleMusic, 14000);
+}
+
+function toggleMusic(){
+  initAudio();
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  isPlaying = !isPlaying;
+  document.getElementById('playBtn').textContent = isPlaying ? '⏸' : '▶';
+  document.getElementById('eqBars').classList.toggle('paused', !isPlaying);
+  if(isPlaying){
+    scheduleMusic();
+    startProgress();
+  } else {
+    stopProgress();
+  }
+}
+
+function setVolume(v){ if(masterGain) masterGain.gain.value = parseFloat(v); }
+
+// Progress bar (fake but feels real)
+function startProgress(){
+  clearInterval(songTimer);
+  songTimer = setInterval(()=>{
+    songProgress += 0.5;
+    if(songProgress >= songDuration){
+      songProgress = 0;
+      currentSong = (currentSong+1) % SONGS.length;
+      document.getElementById('musicTitle').textContent = SONGS[currentSong].title;
+    }
+    document.getElementById('progressBar').style.width = (songProgress/songDuration*100) + '%';
+  }, 500);
+}
+function stopProgress(){ clearInterval(songTimer); }
+function seekMusic(e){
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  songProgress = pct * songDuration;
+}
+
+// ════════════════════════════════════════
+//  HERO PARTICLE BG
+// ════════════════════════════════════════
+const heroCanvas = document.getElementById('heroCanvas');
+const hctx0 = heroCanvas.getContext('2d');
+let HW0=0, HH0=0, heroT=0, heroParticles=[];
+
+function resizeHero(){ HW0=heroCanvas.width=heroCanvas.offsetWidth; HH0=heroCanvas.height=heroCanvas.offsetHeight; }
+resizeHero();
+
+class HeroParticle {
+  constructor(){ this.reset(true); }
+  reset(rand){
+    this.x = Math.random()*HW0;
+    this.y = rand ? Math.random()*HH0 : HH0+20;
+    this.vy = -(0.3+Math.random()*0.8);
+    this.vx = (Math.random()-0.5)*0.3;
+    this.size = 1+Math.random()*2.5;
+    this.alpha = 0.3+Math.random()*0.7;
+    this.hue = 320+Math.random()*50;
+    this.life = 200+Math.random()*200;
+    this.maxLife = this.life;
+  }
+  update(){ this.x+=this.vx; this.y+=this.vy; this.life--; if(this.life<=0||this.y<-10) this.reset(false); }
+  draw(){
+    const a = this.alpha * (this.life/this.maxLife);
+    hctx0.save(); hctx0.globalAlpha=a;
+    hctx0.fillStyle=`hsl(${this.hue},90%,75%)`;
+    hctx0.beginPath(); hctx0.arc(this.x,this.y,this.size,0,Math.PI*2); hctx0.fill();
+    hctx0.restore();
+  }
+}
+for(let i=0;i<80;i++) heroParticles.push(new HeroParticle());
+
+function heroLoop(){
+  hctx0.fillStyle='rgba(4,0,10,0.15)'; hctx0.fillRect(0,0,HW0,HH0);
+  heroParticles.forEach(p=>{p.update();p.draw();});
+  heroT++;
+  requestAnimationFrame(heroLoop);
+}
+heroLoop();
+
+// ════════════════════════════════════════
+//  HEART CANVAS (SECTION 2)
+// ════════════════════════════════════════
+const heartCanvas = document.getElementById('heartCanvas');
+const hctx = heartCanvas.getContext('2d');
+let HW=0, HH=0, ht=0, hMode='pulse', hParticles=[], pulsePhase=0, spiralAngle=0;
+
+function resizeHeart(){ HW=heartCanvas.width=heartCanvas.offsetWidth; HH=heartCanvas.height=heartCanvas.offsetHeight; }
+resizeHeart();
+
+function heartX(a,s){ return s*16*Math.pow(Math.sin(a),3); }
+function heartY(a,s){ return -s*(13*Math.cos(a)-5*Math.cos(2*a)-2*Math.cos(3*a)-Math.cos(4*a)); }
+
+function drawHeart(cx,cy,s,hue,alpha=1){
+  hctx.save(); hctx.beginPath();
+  for(let i=0;i<=100;i++){
+    const a=(i/100)*Math.PI*2;
+    const x=cx+heartX(a,s),y=cy+heartY(a,s);
+    i===0?hctx.moveTo(x,y):hctx.lineTo(x,y);
+  }
+  hctx.closePath();
+  const g=hctx.createRadialGradient(cx,cy-s*2,0,cx,cy,s*10);
+  g.addColorStop(0,`hsla(${hue+20},100%,80%,${alpha})`);
+  g.addColorStop(0.5,`hsla(${hue},100%,60%,${alpha})`);
+  g.addColorStop(1,`hsla(${hue-20},80%,40%,${alpha})`);
+  hctx.fillStyle=g; hctx.fill(); hctx.restore();
+}
+
+class HParticle {
+  constructor(x,y,vx,vy,size,hue,life,type='heart'){
+    Object.assign(this,{x,y,vx,vy,size,hue,life,maxLife:life,type,rot:Math.random()*Math.PI*2,rotV:(Math.random()-0.5)*0.1});
+  }
+  update(){ this.x+=this.vx;this.y+=this.vy;this.vy+=0.04;this.vx*=0.99;this.rot+=this.rotV;this.life--;return this.life>0; }
+  draw(){
+    const a=Math.min(1,this.life/this.maxLife*2);
+    hctx.save();hctx.translate(this.x,this.y);hctx.rotate(this.rot);hctx.globalAlpha=a;
+    if(this.type==='heart') drawHeart(0,0,this.size,this.hue,a);
+    else{hctx.fillStyle=`hsla(${this.hue},90%,70%,${a})`;hctx.beginPath();hctx.arc(0,0,this.size,0,Math.PI*2);hctx.fill();}
+    hctx.restore();
+  }
+}
+
+function drawPulse(){
+  const pulse=1+0.08*Math.sin(pulsePhase);
+  const s=Math.min(HW,HH)*0.026*pulse;
+  const cx=HW/2,cy=HH/2;
+  for(let r=3;r>=0;r--){
+    hctx.save();hctx.globalAlpha=0.04+r*0.015;hctx.beginPath();
+    for(let i=0;i<=100;i++){const a=(i/100)*Math.PI*2;const x=cx+heartX(a,s*(1+r*0.18)),y=cy+heartY(a,s*(1+r*0.18));i===0?hctx.moveTo(x,y):hctx.lineTo(x,y);}
+    hctx.closePath();hctx.fillStyle=`hsl(${340+r*8},100%,60%)`;hctx.fill();hctx.restore();
+  }
+  drawHeart(cx,cy,s,340+10*Math.sin(ht*0.02));
+  for(let i=0;i<10;i++){
+    const a=(i/10)*Math.PI*2+ht*0.015,r2=s*11;
+    const x=cx+Math.cos(a)*r2,y=cy+Math.sin(a)*r2*0.72;
+    hctx.save();hctx.globalAlpha=0.5+0.5*Math.sin(ht*0.04+i);
+    hctx.fillStyle=`hsl(${320+i*12},100%,75%)`;hctx.beginPath();hctx.arc(x,y,2+1.2*Math.sin(ht*0.05+i),0,Math.PI*2);hctx.fill();hctx.restore();
+  }
+  pulsePhase+=0.07;
+}
+function drawFloat(){
+  if(ht%10===0) hParticles.push(new HParticle(Math.random()*HW,HH+40,(Math.random()-0.5)*0.8,-(1.2+Math.random()*1.8),1.5+Math.random()*3,330+Math.random()*40,160+Math.random()*100));
+  hParticles=hParticles.filter(p=>{p.update();p.draw();return true;});
+  drawHeart(HW/2,HH/2,Math.min(HW,HH)*0.022+1.5*Math.sin(ht*0.05),340,0.9);
+}
+function drawExplode(){
+  if(ht%4===0){
+    const a=Math.random()*Math.PI*2,s=Math.min(HW,HH)*0.022;
+    const cx=HW/2,cy=HH/2,hx=cx+heartX(a,s),hy=cy+heartY(a,s);
+    const speed=1+Math.random()*2,ang=Math.atan2(hy-cy,hx-cx);
+    hParticles.push(new HParticle(hx,hy,Math.cos(ang)*speed,Math.sin(ang)*speed-0.8,0.8+Math.random()*2.2,330+Math.random()*50,55+Math.random()*70,'dot'));
+  }
+  hParticles=hParticles.filter(p=>{const a=p.update();p.draw();return a;});
+  drawHeart(HW/2,HH/2,Math.min(HW,HH)*0.022,340);
+}
+function drawSpiral(){
+  spiralAngle+=0.04;
+  const cx=HW/2,cy=HH/2,count=7;
+  for(let i=0;i<count;i++){
+    const a=spiralAngle+(i/count)*Math.PI*2,r=50+32*Math.sin(ht*0.02+i);
+    const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r*0.75;
+    const s=(2.8+1.8*Math.sin(ht*0.05+i))*Math.min(HW,HH)*0.002;
+    hctx.save();hctx.globalAlpha=0.7+0.3*Math.sin(ht*0.04+i);
+    drawHeart(x,y,s,310+i*15+ht*0.3);hctx.restore();
+  }
+  drawHeart(HW/2,HH/2,Math.min(HW,HH)*0.023*(1+0.06*Math.sin(ht*0.06)),340);
+}
+
+heartCanvas.addEventListener('click',e=>{
+  const r=heartCanvas.getBoundingClientRect();
+  for(let i=0;i<16;i++){
+    const a=(i/16)*Math.PI*2,speed=2+Math.random()*4;
+    hParticles.push(new HParticle(e.clientX-r.left,e.clientY-r.top,Math.cos(a)*speed,Math.sin(a)*speed-2,1.8+Math.random()*3.5,310+Math.random()*60,70+Math.random()*60));
+  }
+});
+
+function setMode(m,btn){
+  hMode=m;hParticles=[];
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function heartLoop(){
+  hctx.fillStyle='rgba(10,0,5,0.2)';hctx.fillRect(0,0,HW,HH);
+  const g=hctx.createRadialGradient(HW/2,HH/2,0,HW/2,HH/2,Math.min(HW,HH)*0.5);
+  g.addColorStop(0,'rgba(180,10,60,0.06)');g.addColorStop(1,'transparent');
+  hctx.fillStyle=g;hctx.fillRect(0,0,HW,HH);
+  if(hMode==='pulse')   drawPulse();
+  if(hMode==='float')   drawFloat();
+  if(hMode==='explode') drawExplode();
+  if(hMode==='spiral')  drawSpiral();
+  if(hMode!=='float'&&hMode!=='explode') hParticles=hParticles.filter(p=>{const a=p.update();p.draw();return a;});
+  ht++;requestAnimationFrame(heartLoop);
+}
+heartLoop();
+
+// ════════════════════════════════════════
+//  STARRY SKY CANVAS (SECTION 3)
+// ════════════════════════════════════════
+const skyCanvas = document.getElementById('skyCanvas');
+const sctx = skyCanvas.getContext('2d');
+let SW=0,SH=0,st=0,stars=[],shooters=[],nebulae=[];
+
+function resizeSky(){ SW=skyCanvas.width=skyCanvas.offsetWidth;SH=skyCanvas.height=skyCanvas.offsetHeight;initStars(); }
+resizeSky();
+
+function initStars(){
+  stars=[];nebulae=[];
+  const count=Math.floor((SW*SH)/1600);
+  for(let i=0;i<count;i++) stars.push({x:Math.random()*SW,y:Math.random()*SH,r:0.3+Math.random()*1.6,hue:200+Math.random()*120,ts:0.02+Math.random()*0.04,to:Math.random()*Math.PI*2,alpha:0.4+Math.random()*0.6});
+  for(let i=0;i<6;i++) nebulae.push({x:Math.random()*SW,y:Math.random()*SH,r:80+Math.random()*140,hue:220+Math.random()*100,alpha:0.015+Math.random()*0.025});
+}
+
+function spawnShooter(){
+  shooters.push({x:Math.random()*SW*0.6,y:Math.random()*SH*0.4,vx:4+Math.random()*5,vy:1.5+Math.random()*3,len:80+Math.random()*100,life:60,maxLife:60,hue:220+Math.random()*80});
+}
+
+function drawSky(){
+  sctx.fillStyle='rgba(3,0,13,0.22)';sctx.fillRect(0,0,SW,SH);
+  nebulae.forEach(n=>{
+    const g=sctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
+    g.addColorStop(0,`hsla(${n.hue},80%,60%,${n.alpha*2})`);g.addColorStop(1,`hsla(${n.hue},60%,40%,0)`);
+    sctx.fillStyle=g;sctx.beginPath();sctx.arc(n.x,n.y,n.r,0,Math.PI*2);sctx.fill();
+  });
+  stars.forEach(s=>{
+    const tw=Math.sin(st*s.ts+s.to),a=s.alpha*(0.6+0.4*tw),r=s.r*(0.85+0.2*tw);
+    sctx.save();sctx.globalAlpha=a;
+    const g=sctx.createRadialGradient(s.x,s.y,0,s.x,s.y,r*4);
+    g.addColorStop(0,`hsla(${s.hue},90%,95%,0.8)`);g.addColorStop(0.3,`hsla(${s.hue},80%,80%,0.3)`);g.addColorStop(1,'transparent');
+    sctx.fillStyle=g;sctx.beginPath();sctx.arc(s.x,s.y,r*4,0,Math.PI*2);sctx.fill();
+    sctx.fillStyle=`hsl(${s.hue},90%,97%)`;sctx.beginPath();sctx.arc(s.x,s.y,r,0,Math.PI*2);sctx.fill();
+    sctx.restore();
+  });
+  shooters=shooters.filter(s=>{
+    const a=s.life/s.maxLife;
+    sctx.save();
+    const g=sctx.createLinearGradient(s.x,s.y,s.x-s.vx*(s.len/6),s.y-s.vy*(s.len/6));
+    g.addColorStop(0,`hsla(${s.hue},100%,95%,${a})`);g.addColorStop(1,`hsla(${s.hue},80%,80%,0)`);
+    sctx.strokeStyle=g;sctx.lineWidth=1.5+a;sctx.beginPath();sctx.moveTo(s.x,s.y);sctx.lineTo(s.x-s.vx*(s.len/6),s.y-s.vy*(s.len/6));sctx.stroke();
+    sctx.globalAlpha=a;sctx.fillStyle='white';sctx.beginPath();sctx.arc(s.x,s.y,1.5,0,Math.PI*2);sctx.fill();
+    sctx.restore();
+    s.x+=s.vx;s.y+=s.vy;s.life--;
+    return s.life>0&&s.x<SW+100&&s.y<SH+100;
+  });
+  if(st%200===0||st===80) spawnShooter();
+  // Crescent moon
+  const mx=SW*0.88,my=SH*0.1,mr=24;
+  const mg=sctx.createRadialGradient(mx,my,0,mx,my,mr*5);
+  mg.addColorStop(0,'rgba(200,190,255,0.12)');mg.addColorStop(1,'transparent');
+  sctx.fillStyle=mg;sctx.beginPath();sctx.arc(mx,my,mr*5,0,Math.PI*2);sctx.fill();
+  sctx.save();sctx.globalAlpha=0.75;
+  sctx.fillStyle='rgba(225,220,255,0.92)';sctx.beginPath();sctx.arc(mx,my,mr,0,Math.PI*2);sctx.fill();
+  sctx.fillStyle='rgba(3,0,13,0.9)';sctx.beginPath();sctx.arc(mx+9,my-4,mr*0.86,0,Math.PI*2);sctx.fill();
+  sctx.restore();
+  st++;
+}
+
+document.getElementById('skySec').addEventListener('click',spawnShooter);
+
+function skyLoop(){ drawSky(); requestAnimationFrame(skyLoop); }
+skyLoop();
+
+// ════════════════════════════════════════
+//  SCROLL NAV DOTS
+// ════════════════════════════════════════
+const sections=['heroSec','heartSec','skySec'];
+const dots=document.querySelectorAll('.scroll-dot');
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const idx=sections.indexOf(e.target.id);
+      dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
+    }
+  });
+},{threshold:0.5});
+sections.forEach(id=>observer.observe(document.getElementById(id)));
+
+// ════════════════════════════════════════
+//  RESIZE ALL
+// ════════════════════════════════════════
+window.addEventListener('resize',()=>{resizeHero();resizeHeart();resizeSky();});
+
+// ── Poem reveal on scroll into view ──
+const skyObs=new IntersectionObserver(entries=>{
+  if(entries[0].isIntersecting){
+    document.querySelectorAll('.poem-line').forEach((l,i)=>setTimeout(()=>l.classList.add('visible'),i*280+300));
+    skyObs.disconnect();
+  }
+},{threshold:0.3});
+skyObs.observe(document.getElementById('skySec'));
+</script>
+</body>
+</html>

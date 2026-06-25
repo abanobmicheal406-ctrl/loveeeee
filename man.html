@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Web</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,600&family=Playfair+Display:ital@1&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --rose: #e8455a;
+    --blush: #f2a5b0;
+    --cream: #fdf6f0;
+    --deep: #1a0a0f;
+    --gold: #c9956a;
+  }
+
+  body {
+    background: var(--deep);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    font-family: 'Cormorant Garamond', serif;
+    cursor: none;
+  }
+
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 0;
+  }
+
+  .center {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .heart-svg {
+    width: 120px;
+    height: 120px;
+    animation: pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(232, 69, 90, 0.7));
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(232,69,90,0.6)); }
+    50% { transform: scale(1.12); filter: drop-shadow(0 0 50px rgba(232,69,90,1)); }
+  }
+
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    color: var(--cream);
+    letter-spacing: 0.05em;
+    margin-top: 1rem;
+    animation: fadeIn 2s ease forwards;
+    opacity: 0;
+    animation-delay: 0.5s;
+    text-shadow: 0 0 60px rgba(232,69,90,0.4);
+  }
+
+  .subtitle {
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    color: var(--blush);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+    animation: fadeIn 2s ease forwards;
+    opacity: 0;
+    animation-delay: 1.2s;
+    font-weight: 300;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  .cursor {
+    position: fixed;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+  }
+
+  .cursor svg {
+    width: 100%;
+    height: 100%;
+    animation: cursorPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes cursorPulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
+  .particles-container {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .floating-heart {
+    position: absolute;
+    opacity: 0;
+    animation: floatUp linear forwards;
+  }
+
+  @keyframes floatUp {
+    0% { opacity: 0; transform: translateY(0) scale(0.5) rotate(0deg); }
+    10% { opacity: 0.9; }
+    90% { opacity: 0.6; }
+    100% { opacity: 0; transform: translateY(-100vh) scale(1.2) rotate(20deg); }
+  }
+
+  /* Vignette */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(10,0,5,0.7) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="web"></canvas>
+
+<div class="particles-container" id="particles"></div>
+
+<div class="center">
+  <svg class="heart-svg" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 85 C50 85 5 55 5 28 C5 14 16 5 28 5 C37 5 46 11 50 18 C54 11 63 5 72 5 C84 5 95 14 95 28 C95 55 50 85 50 85Z"
+      fill="url(#hg)" stroke="rgba(255,200,200,0.3)" stroke-width="1"/>
+    <defs>
+      <radialGradient id="hg" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#ff7090"/>
+        <stop offset="100%" stop-color="#c0284a"/>
+      </radialGradient>
+    </defs>
+  </svg>
+  <div class="title">7ok4aaaa</div>
+  <div class="subtitle">move your cursor &nbsp;·&nbsp; feel the web</div>
+</div>
+
+<div class="cursor" id="cursor">
+  <svg viewBox="0 0 20 18" fill="none">
+    <path d="M10 17 C10 17 1 11 1 5.5 C1 2.9 3.2 1 5.5 1 C7.3 1 9 2.2 10 3.8 C11 2.2 12.7 1 14.5 1 C16.8 1 19 2.9 19 5.5 C19 11 10 17 10 17Z" fill="#e8455a"/>
+  </svg>
+</div>
+
+<script>
+const canvas = document.getElementById('web');
+const ctx = canvas.getContext('2d');
+const cursor = document.getElementById('cursor');
+
+let W = canvas.width = window.innerWidth;
+let H = canvas.height = window.innerHeight;
+
+let mouse = { x: W / 2, y: H / 2 };
+
+window.addEventListener('resize', () => {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  initNodes();
+});
+
+window.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+  cursor.style.left = (e.clientX - 9) + 'px';
+  cursor.style.top = (e.clientY - 9) + 'px';
+  spawnHeart(e.clientX, e.clientY);
+});
+
+// Nodes
+const NODE_COUNT = 60;
+let nodes = [];
+
+function initNodes() {
+  nodes = [];
+  for (let i = 0; i < NODE_COUNT; i++) {
+    nodes.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: (Math.random() - 0.5) * 0.6,
+      r: Math.random() * 2.5 + 1,
+      hue: Math.random() * 30 - 15, // variation around rose
+    });
+  }
+}
+initNodes();
+
+const MAX_DIST = 160;
+const MOUSE_DIST = 200;
+
+let heartSpawnTimer = 0;
+
+function spawnHeart(x, y) {
+  const el = document.createElement('div');
+  el.classList.add('floating-heart');
+  const size = Math.random() * 18 + 8;
+  el.style.left = (x - size/2) + 'px';
+  el.style.top = (y - size/2) + 'px';
+  el.style.width = size + 'px';
+  el.style.height = size + 'px';
+  el.style.animationDuration = (Math.random() * 3 + 2) + 's';
+  el.style.animationDelay = '0s';
+  const opacity = Math.random() * 0.6 + 0.3;
+  el.innerHTML = `<svg viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 17 C10 17 1 11 1 5.5 C1 2.9 3.2 1 5.5 1 C7.3 1 9 2.2 10 3.8 C11 2.2 12.7 1 14.5 1 C16.8 1 19 2.9 19 5.5 C19 11 10 17 10 17Z" fill="rgba(232,69,90,${opacity})"/>
+  </svg>`;
+  document.getElementById('particles').appendChild(el);
+  setTimeout(() => el.remove(), 5000);
+}
+
+// Ambient hearts
+setInterval(() => {
+  const x = Math.random() * W;
+  const y = H + 10;
+  const el = document.createElement('div');
+  el.classList.add('floating-heart');
+  const size = Math.random() * 14 + 5;
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  el.style.width = size + 'px';
+  el.style.height = size + 'px';
+  el.style.animationDuration = (Math.random() * 5 + 4) + 's';
+  el.innerHTML = `<svg viewBox="0 0 20 18" fill="none"><path d="M10 17 C10 17 1 11 1 5.5 C1 2.9 3.2 1 5.5 1 C7.3 1 9 2.2 10 3.8 C11 2.2 12.7 1 14.5 1 C16.8 1 19 2.9 19 5.5 C19 11 10 17 10 17Z" fill="rgba(232,69,90,${Math.random()*0.4+0.1})"/></svg>`;
+  document.getElementById('particles').appendChild(el);
+  setTimeout(() => el.remove(), 9000);
+}, 600);
+
+function drawHeartAt(cx, cy, size, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(cx, cy);
+  ctx.scale(size / 20, size / 20);
+  ctx.beginPath();
+  ctx.moveTo(10, 17);
+  ctx.bezierCurveTo(10, 17, 1, 11, 1, 5.5);
+  ctx.bezierCurveTo(1, 2.9, 3.2, 1, 5.5, 1);
+  ctx.bezierCurveTo(7.3, 1, 9, 2.2, 10, 3.8);
+  ctx.bezierCurveTo(11, 2.2, 12.7, 1, 14.5, 1);
+  ctx.bezierCurveTo(16.8, 1, 19, 2.9, 19, 5.5);
+  ctx.bezierCurveTo(19, 11, 10, 17, 10, 17);
+  ctx.fillStyle = `rgba(232, 69, 90, ${alpha})`;
+  ctx.fill();
+  ctx.restore();
+}
+
+function animate() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Update nodes
+  for (let n of nodes) {
+    n.x += n.vx;
+    n.y += n.vy;
+    if (n.x < 0 || n.x > W) n.vx *= -1;
+    if (n.y < 0 || n.y > H) n.vy *= -1;
+
+    // Mouse repulsion/attraction
+    const dx = mouse.x - n.x;
+    const dy = mouse.y - n.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < MOUSE_DIST) {
+      const force = (1 - dist / MOUSE_DIST) * 0.015;
+      n.vx -= dx * force * 0.1;
+      n.vy -= dy * force * 0.1;
+    }
+
+    // Dampen
+    n.vx *= 0.999;
+    n.vy *= 0.999;
+  }
+
+  // Draw connections
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MAX_DIST) {
+        const alpha = (1 - dist / MAX_DIST) * 0.5;
+        const gradient = ctx.createLinearGradient(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y);
+        gradient.addColorStop(0, `rgba(232, 69, 90, ${alpha})`);
+        gradient.addColorStop(0.5, `rgba(201, 149, 106, ${alpha * 0.7})`);
+        gradient.addColorStop(1, `rgba(232, 69, 90, ${alpha})`);
+        ctx.beginPath();
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = alpha * 2;
+        ctx.moveTo(nodes[i].x, nodes[i].y);
+        ctx.lineTo(nodes[j].x, nodes[j].y);
+        ctx.stroke();
+
+        // Draw small heart at midpoint for very close nodes
+        if (dist < 60) {
+          const mx = (nodes[i].x + nodes[j].x) / 2;
+          const my = (nodes[i].y + nodes[j].y) / 2;
+          drawHeartAt(mx, my, 8, (1 - dist / 60) * 0.4);
+        }
+      }
+    }
+  }
+
+  // Draw mouse connections
+  for (let n of nodes) {
+    const dx = mouse.x - n.x;
+    const dy = mouse.y - n.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < MOUSE_DIST) {
+      const alpha = (1 - dist / MOUSE_DIST) * 0.8;
+      ctx.beginPath();
+      const g = ctx.createLinearGradient(n.x, n.y, mouse.x, mouse.y);
+      g.addColorStop(0, `rgba(232, 69, 90, ${alpha * 0.4})`);
+      g.addColorStop(1, `rgba(232, 69, 90, ${alpha})`);
+      ctx.strokeStyle = g;
+      ctx.lineWidth = alpha * 2.5;
+      ctx.moveTo(n.x, n.y);
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.stroke();
+    }
+  }
+
+  // Draw nodes as tiny hearts
+  for (let n of nodes) {
+    drawHeartAt(n.x, n.y, n.r * 5, 0.7);
+  }
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>

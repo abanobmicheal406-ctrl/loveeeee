@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SANDRA'S BIRTHDAY</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400&display=swap');
+
+        :root {
+            /* NEW COLOR PALETTE: Neon Pink & Sunset Orange */
+            --accent: #ff007f; 
+            --secondary: #ff8c00;
+            --white: #ffffff;
+            --heart-glow: rgba(255, 0, 127, 0.15);
+            --bg-dark: #0f0514; /* Deep Midnight Purple */
+        }
+
+        body, html {
+            margin: 0; padding: 0; min-height: 100vh; width: 100vw;
+            background: var(--bg-dark);
+            color: var(--white);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- BACKGROUND EFFECTS --- */
+        .bg-glow {
+            position: fixed; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1d0a26 0%, #000 100%);
+            z-index: -2;
+        }
+
+        #glowCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+        }
+
+        .container { 
+            text-align: center; z-index: 10; width: 95%; 
+            max-width: 1200px; margin: 0 auto; padding: 50px 0 150px 0; 
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif; font-size: 2.5rem; letter-spacing: 15px;
+            margin-bottom: 70px; color: var(--accent);
+            animation: fadeInDown 2s ease;
+            text-shadow: 0 0 25px rgba(255, 0, 127, 0.7);
+        }
+
+        /* --- GRID LAYOUT --- */
+        .menu-options {
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 80px 20px;
+        }
+
+        /* --- THE HEART SHAPE --- */
+        .option {
+            position: relative; width: 100px; height: 90px;
+            margin: 0 auto 40px auto; cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .option::before, .option::after {
+            content: ""; position: absolute; left: 50px; top: 0;
+            width: 50px; height: 80px;
+            background: var(--heart-glow);
+            border: 1px solid rgba(255, 0, 127, 0.4);
+            border-bottom: none; border-radius: 50px 50px 0 0;
+            transform: rotate(-45deg); transform-origin: 0 100%;
+            transition: all 0.5s ease;
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.1);
+        }
+
+        .option::after { left: 0; transform: rotate(45deg); transform-origin: 100% 100%; }
+
+        .option:hover { transform: translateY(-15px) scale(1.1); }
+
+        .option:hover::before, .option:hover::after {
+            background: rgba(255, 0, 127, 0.5);
+            border-color: var(--secondary);
+            box-shadow: 0 0 40px var(--accent), 0 0 15px var(--secondary);
+        }
+
+        .label {
+            position: absolute; top: 100%; left: 50%;
+            transform: translateX(-50%); width: 150px;
+            margin-top: 15px; pointer-events: none;
+        }
+
+        .option h2 {
+            font-family: 'Cinzel', serif; font-size: 0.75rem;
+            letter-spacing: 2px; margin: 0; color: var(--white);
+        }
+
+        .option p { font-size: 0.5rem; letter-spacing: 1px; opacity: 0.6; text-transform: uppercase; margin-top: 5px; color: var(--secondary); }
+
+        /* --- NAVIGATION --- */
+        .bottom-nav {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        .menu-btn {
+            background: rgba(15, 5, 20, 0.8);
+            color: var(--white);
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem; letter-spacing: 4px;
+            text-decoration: none; padding: 15px 40px;
+            border: 1px solid var(--accent);
+            backdrop-filter: blur(10px);
+            transition: 0.4s;
+        }
+
+        .menu-btn:hover {
+            background: var(--accent); color: white;
+            box-shadow: 0 0 40px var(--accent);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .menu-options { grid-template-columns: 1fr 1fr; }
+            h1 { font-size: 1.5rem; letter-spacing: 8px; }
+        }
+        /* Music Control Toggle */
+.music-control {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(15, 5, 20, 0.8);
+    border: 1px solid var(--accent);
+    color: var(--white);
+    padding: 10px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+}
+
+.music-control:hover {
+    box-shadow: 0 0 15px var(--accent);
+    color: var(--secondary);
+}
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" loop>
+    <source src="ran.mpeg" type="audio/mpeg">
+
+</audio>
+
+    <canvas id="glowCanvas"></canvas>
+    <div class="bg-glow"></div>
+
+    <div class="container">
+      
+        <h1>QUEEN OF AUGUST , ENJOY THE WEB</h1>
+        
+        <div class="menu-options">
+            <div class="option" onclick="location.href='a.html'"><div class="label"><h2>SANDRA</h2><p>Part I</p></div></div>
+            <div class="option" onclick="location.href='b.html'"><div class="label"><h2>SANDOURA</h2><p>Part II</p></div></div>
+            <div class="option" onclick="location.href='roma.html'"><div class="label"><h2>SANDOUZA</h2><p>Part III</p></div></div>
+            <div class="option" onclick="location.href='==.html'"><div class="label"><h2>7OK4A</h2><p>Part IV</p></div></div>
+            <div class="option" onclick="location.href='e.html'"><div class="label"><h2>FAYZA</h2><p>Part V</p></div></div>
+            <div class="option" onclick="location.href=';;.html'"><div class="label"><h2>WTWT</h2><p>Part VI</p></div></div>
+            <div class="option" onclick="location.href='g.html'"><div class="label"><h2>3ADALA</h2><p>Part VII</p></div></div>
+            <div class="option" onclick="location.href='h.html'"><div class="label"><h2>CUTIE</h2><p>Part VIII</p></div></div>
+            <div class="option" onclick="location.href='z.html'"><div class="label"><h2>PETITE</h2><p>Part IX</p></div></div>
+            <div class="option" onclick="location.href='j.html'"><div class="label"><h2>BO2BO2 EL 2LB</h2><p>Part X</p></div></div>
+            <div class="option" onclick="location.href='k.html'"><div class="label"><h2>BO2BO2 EL EYE</h2><p>Part XI</p></div></div>
+            <div class="option" onclick="location.href='l.html'"><div class="label"><h2>KINDEST ONE EVER</h2><p>Part XII</p></div></div>
+            <div class="option" onclick="location.href='m.html'"><div class="label"><h2>DARWIN</h2><p>Part XIII</p></div></div>
+            <div class="option" onclick="location.href='n.html'"><div class="label"><h2>BEST SMILE</h2><p>Part XIV</p></div></div>
+            <div class="option" onclick="location.href='o1.html'"><div class="label"><h2>R5MA AWY</h2><p>Part XV</p></div></div>
+            <div class="option" onclick="location.href='p.html'"><div class="label"><h2>MOSTFZA</h2><p>Part XVI</p></div></div>
+            <div class="option" onclick="location.href='q.html'"><div class="label"><h2>3BATA</h2><p>Part XVII</p></div></div>
+            <div class="option" onclick="location.href='r.html'"><div class="label"><h2>BEST KAKET BORTOKALLLL</h2><p>Part XVIII</p></div></div>
+            <div class="option" onclick="location.href='s.html'"><div class="label"><h2>EL 7RA2A</h2><p>Part XIX</p></div></div>
+            <div class="option" onclick="location.href='t.html'"><div class="label"><h2>MTBNGA</h2><p>Part XX</p></div></div>
+            <div class="option" onclick="location.href='u.html'"><div class="label"><h2>3OMLA NADRA </h2><p>Part XXI</p></div></div>
+            <div class="option" onclick="location.href='v.html'"><div class="label"><h2>SENDRELAAA</h2><p>Part XXII</p></div></div>
+            <div class="option" onclick="location.href='lone.html'"><div class="label"><h2>M3ZA </h2><p>Part XXIII</p></div></div>
+            <div class="option" onclick="location.href='x.html'"><div class="label"><h2>MOT5LFA</h2><p>Part XXIV</p></div></div>
+            <div class="option" onclick="location.href='y.html'"><div class="label"><h2>LOZA</h2><p>Part XXV</p></div></div>
+            <div class="option" onclick="location.href='i.html'"><div class="label"><h2>Zenith</h2><p>Part XXVI</p></div></div>
+            <div class="option" onclick="location.href='c.html'"><div class="label"><h2>Aurora</h2><p>Part XXVII</p></div></div>
+            <div class="option" onclick="location.href='w.html'"><div class="label"><h2>Origin</h2><p>Part XXVIII</p></div></div>
+            <div class="option" onclick="location.href='man.html'"><div class="label"><h2>Supernova</h2><p>Part XXIX</p></div></div>
+            <div class="option" onclick="location.href='bnm.html'"><div class="label"><h2>Beyond</h2><p>Part XXX</p></div></div>
+            <div class="option" onclick="location.href='f.html'"><div class="label"><h2>Supernova</h2><p>Part XXIX</p></div></div>
+            <div class="option" onclick="location.href='d.html'"><div class="label"><h2>Beyond</h2><p>Part XXX</p></div></div>          
+            <div class="option" onclick="location.href='1111.html'"><div class="label"><h2>Supernova</h2><p>Part XXIX</p></div></div>
+            <div class="option" onclick="location.href='22222.html'"><div class="label"><h2>Beyond</h2><p>Part XXX</p></div></div>
+            <div class="option" onclick="location.href='0000.html'"><div class="label"><h2>Supernova</h2><p>Part XXIX</p></div></div>
+            <div class="option" onclick="location.href='bnm.html'"><div class="label"><h2>Beyond</h2><p>Part XXX</p></div></div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="o.html" class="menu-btn">SURPRISE HOME, OPEN IT LAST THING </a>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('glowCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speed = Math.random() * 0.5 + 0.2;
+                this.alpha = Math.random() * 0.5;
+                this.color = Math.random() > 0.5 ? '#ff007f' : '#ff8c00'; // Mix of Pink and Orange
+            }
+            update() {
+                this.y -= this.speed;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            resize();
+            particles = [];
+            for(let i=0; i<80; i++) particles.push(new Particle());
+            animate();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        init();
+        const music = document.getElementById('bgMusic');
+const musicBtn = document.createElement('button');
+musicBtn.className = 'music-control';
+musicBtn.innerHTML = 'MUSIC: OFF';
+document.body.appendChild(musicBtn);
+
+let isPlaying = false;
+
+musicBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        music.pause();
+        musicBtn.innerHTML = 'MUSIC: OFF';
+    } else {
+        music.play();
+        musicBtn.innerHTML = 'MUSIC: ON';
+    }
+    isPlaying = !isPlaying;
+});
+
+// Optional: Start music automatically on the first time the user clicks anywhere
+document.addEventListener('click', () => {
+    if (!isPlaying) {
+        music.play().then(() => {
+            isPlaying = true;
+            musicBtn.innerHTML = 'MUSIC: ON';
+        }).catch(err => console.log("Audio waiting for interaction"));
+    }
+}, { once: true });
+    </script>
+</body>
+</html>
+

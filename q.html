@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Radio: Calm Spectrum</title>
+    <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Quicksand:wght@300;500&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --soft-blue: #a2d2ff;
+            --soft-pink: #ffafcc;
+            --bg: #0a0b10;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background: var(--bg);
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+            height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden;
+            transition: background 1.5s ease;
+        }
+
+        /* --- Calm Background Effects --- */
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                        radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                        radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0));
+            background-repeat: repeat; background-size: 200px 200px;
+            opacity: 0.3; animation: twinkle 5s infinite alternate;
+        }
+
+        @keyframes twinkle { from { opacity: 0.2; } to { opacity: 0.5; } }
+
+        .radio-container { width: 90%; max-width: 500px; text-align: center; z-index: 10; }
+
+        .station-display {
+            font-family: 'Major Mono Display', monospace;
+            font-size: 3.5rem; margin-bottom: 20px;
+            color: var(--soft-blue);
+            text-shadow: 0 0 20px rgba(162, 210, 255, 0.3);
+            transition: color 1s ease;
+        }
+
+        .tuner-shell {
+            position: relative; height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px; margin-bottom: 40px;
+        }
+
+        #frequency-slider {
+            width: 100%; -webkit-appearance: none; appearance: none; background: transparent; 
+            cursor: pointer; position: relative; top: -15px;
+        }
+
+        #frequency-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px; 
+            background: white; border-radius: 50%;
+            box-shadow: 0 0 15px white; border: 2px solid var(--soft-blue);
+        }
+
+        /* --- Content Appearance --- */
+        .broadcast-content {
+            height: 380px;
+            display: flex; flex-direction: column; align-items: center;
+            opacity: 0; transform: translateY(10px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .broadcast-content.active { opacity: 1; transform: translateY(0); }
+
+        .photo-frame {
+            width: 220px; height: 220px; margin-bottom: 20px;
+            border-radius: 50%; border: 4px solid white;
+            overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Words Appear Effect */
+        .broadcast-title { 
+            font-family: 'Dancing Script', cursive; font-size: 2.2rem; 
+            color: var(--soft-pink); margin: 0;
+            overflow: hidden; white-space: nowrap;
+            animation: floating 3s infinite ease-in-out;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .broadcast-text {
+            font-size: 1rem; opacity: 0.9; margin-top: 10px;
+            max-width: 80%; line-height: 1.5;
+            letter-spacing: 0.5px;
+        }
+
+        .hint { font-size: 0.7rem; letter-spacing: 3px; opacity: 0.4; margin-top: 30px; }
+    </style>
+</head>
+<body id="body-bg">
+
+    <div class="stars"></div>
+
+    <div class="radio-container">
+        <div class="station-display" id="freq-num">88.0</div>
+        
+        <div class="tuner-shell">
+            <input type="range" id="frequency-slider" min="880" max="1100" value="880">
+        </div>
+
+        <div class="broadcast-content" id="content">
+            <div class="photo-frame"><img id="cast-img" src="" alt=""></div>
+            <div class="broadcast-title" id="cast-title"></div>
+            <p class="broadcast-text" id="cast-text"></p>
+        </div>
+
+        <p class="hint">TUNE INTO THE LOVE SPECTRUM</p>
+    </div>
+
+    <script>
+        const slider = document.getElementById('frequency-slider');
+        const content = document.getElementById('content');
+        const bodyBg = document.getElementById('body-bg');
+        
+        const stations = {
+            "890": { title: "The First Sight", text: "When the universe decided we should happen.", img: "photo6.jpg" },
+            "920": { title: "Soft Evenings", text: "PLACE FEELS better when you're there.", img: "photo4.jpg" },
+            "950": { title: "Moonlit Walks", text: "Two years and half of walking side by side.", img: "photo30.JPG" },
+            "980": { title: "Safe Haven", text: "Your hug is the only home I need.", img: "photo9.jpg" },
+            "1010": { title: "Pure Joy", text: "Your smile is the brightest star in my sky.", img: "photo5.jpg" },
+            "1040": { title: "Soulmates", text: "Deep conversations that feel like dreaming.", img: "photo38.jpg" },
+            "1070": { title: "Infinity", text: "A love that grows with every single beat.", img: "photo27.jpg" },
+            "1100": { title: "Happy Birthday", text: "To the person who makes 2027 feel like heaven.", img: "photo15.jpg" }
+        };
+
+        slider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            document.getElementById('freq-num').innerText = (val/10).toFixed(1);
+            
+            // Calm Background Color Shift
+            const percent = (val - 880) / 220;
+            bodyBg.style.backgroundColor = `rgba(${10 + percent * 30}, ${11 + percent * 10}, ${16 + percent * 15}, 1)`;
+            
+            // Check for stations
+            if(stations[val]) {
+                revealStation(stations[val]);
+            } else {
+                content.classList.remove('active');
+            }
+        });
+
+        function revealStation(data) {
+            // Reset text to trigger animation
+            document.getElementById('cast-title').innerText = data.title;
+            document.getElementById('cast-text').innerText = data.text;
+            document.getElementById('cast-img').src = data.img;
+            
+            content.classList.add('active');
+            
+            // Tiny confetti burst for a calm celebrate
+            confetti({
+                particleCount: 20,
+                spread: 40,
+                origin: { y: 0.8 },
+                colors: ['#a2d2ff', '#ffafcc']
+            });
+        }
+    </script>
+</body>
+</html>

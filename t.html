@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System.Love_Init()</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #bde0fe;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        #terminal {
+            width: 100%;
+            max-width: 650px;
+            height: 420px;
+            background: rgba(15, 15, 15, 0.95);
+            border: 2px solid #ffafcc;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(255, 175, 204, 0.3);
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+
+        .line {
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: fadeIn 0.2s forwards;
+            text-shadow: 0 0 5px #bde0fe;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: #ffafcc;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        #final-message {
+            display: none;
+            text-align: center;
+            animation: heartFade 1.5s ease-out;
+        }
+
+        pre {
+            font-size: 8px;
+            line-height: 1.1;
+            color: #ffafcc;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 175, 204, 0.8);
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        h1 { color: #ffafcc; letter-spacing: 5px; margin: 10px 0; font-size: 1.5rem; }
+        
+        .btn-container {
+            margin-top: 20px;
+            height: 100px;
+            position: relative;
+        }
+
+        button {
+            background: transparent;
+            border: 2px solid #ffafcc;
+            color: #ffafcc;
+            padding: 10px 25px;
+            font-family: 'Courier New', Courier, monospace;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, color 0.3s;
+            margin: 0 10px;
+        }
+
+        button:hover {
+            background: #ffafcc;
+            color: #0d0d0d;
+            box-shadow: 0 0 15px #ffafcc;
+        }
+
+        #no-btn {
+            position: absolute;
+            transition: all 0.2s ease;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff4d6d;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes heartFade {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="terminal">
+        <div id="output"></div>
+        <span id="cursor" class="cursor"></span>
+    </div>
+
+    <div id="final-message">
+<pre>
+ ██████╗  █████╗ ███╗   ██╗██████╗  ██████╗ ██╗   ██╗██████╗  █████╗ 
+██╔════╝ ██╔══██╗████╗  ██║██╔══██╗██╔═══██╗██║   ██║██╔══██╗██╔══██╗
+╚█████╗  ███████║██╔██╗ ██║██║  ██║██║   ██║██║   ██║██████╔╝███████║
+ ╚═══██╗ ██╔══██║██║╚██╗██║██║  ██║██║   ██║██║   ██║██╔══██╗██╔══██║
+██████╔╝ ██║  ██║██║ ╚████║██████╔╝╚██████╔╝╚██████╔╝██║  ██║██║  ██║
+╚═════╝  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+</pre>
+        <h1>BE MY PUPPY?</h1>
+        <div class="btn-container">
+            <button id="yes-btn" onclick="accept()">[ YES ]</button>
+            <button id="no-btn" onmouseover="moveButton()">[ NO ]</button>
+        </div>
+    </div>
+
+    <script>
+        const output = document.getElementById('output');
+        const terminal = document.getElementById('terminal');
+        const finalMessage = document.getElementById('final-message');
+        const cursor = document.getElementById('cursor');
+        const noBtn = document.getElementById('no-btn');
+
+        const lines = [
+            "> [SYSTEM] Initializing Heartbeat.exe...",
+            "> [INFO] Searching database for 'Sandoura'...",
+            "> [MATCH] Found 1 result: My Everything.",
+            "> [STATUS] Running compatibility check...",
+            "> [LOG] Memory index: Beautiful Smile... [OK]",
+            "> [LOG] Memory index: Kindness Level... [MAX]",
+            "> [WARN] Heart rate increasing unexpectedly.",
+            "> [CRITICAL] System overload: Excessive Love.",
+            "> [CMD] Finalizing digital flower delivery...",
+            "> DECRYPTING SECRET KEY..."
+        ];
+
+        let lineIndex = 0;
+
+        function printLine() {
+            if (lineIndex < lines.length) {
+                const div = document.createElement('div');
+                div.className = 'line';
+                div.textContent = lines[lineIndex];
+                output.appendChild(div);
+                lineIndex++;
+                terminal.scrollTop = terminal.scrollHeight;
+                setTimeout(printLine, 600);
+            } else {
+                setTimeout(showFinal, 1000);
+            }
+        }
+
+        function showFinal() {
+            terminal.style.display = 'none';
+            cursor.style.display = 'none';
+            finalMessage.style.display = 'block';
+            document.body.style.backgroundColor = "#1b1b1b";
+        }
+
+        function moveButton() {
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        }
+
+        function accept() {
+            noBtn.style.display = 'none';
+            document.querySelector('h1').innerHTML = "SYSTEM UPDATE: I LOVE YOU! ❤️";
+            setInterval(createHeart, 150);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.top = "100vh";
+            heart.style.transition = "all 3s linear";
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.style.top = "-10vh";
+                heart.style.opacity = "0";
+                heart.style.transform = `scale(${Math.random() * 2})`;
+            }, 100);
+
+            setTimeout(() => heart.remove(), 3000);
+        }
+
+        setTimeout(printLine, 500);
+    </script>
+</body>
+</html>

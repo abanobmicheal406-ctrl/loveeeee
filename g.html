@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALENTINE_FIXED</title>
+    <style>
+        body {
+            margin: 0;
+            background: rgb(243, 222, 222)5e5;
+            color: white;
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #card {
+            padding: 50px;
+            border: 2px solid #fff;
+            text-align: center;
+            z-index: 10;
+            background: #fa7bc9;
+        }
+
+        .letter {
+            display: inline-block;
+            font-size: 2.5rem;
+            transition: transform 0.1s;
+        }
+
+        #hole {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255, 132, 173, 0.6) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            display: none;
+        }
+
+        /* The Shocking Reveal Screen */
+        #final-screen {
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            color: #ff0055;
+            animation: burst 0.5s ease-out;
+        }
+
+        @keyframes burst {
+            0% { transform: scale(0); border-radius: 100%; }
+            100% { transform: scale(1); border-radius: 0%; }
+        }
+
+        .secret-photo {
+            width: 300px;
+            height: 300px;
+            border: 10px solid #f8f4f6;
+            border-radius: 20px;
+            object-fit: cover;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        h2 { font-size: 3rem; margin: 0; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <div id="hole"></div>
+
+    <div id="card">
+        <div id="text-container"></div>
+        <p id="hint" style="margin-top: 20px; color: #ff0055;">SYSTEM CRITICAL: TYPE "SANDOURA" TO RESTORE</p>
+    </div>
+
+    <div id="final-screen">
+        <img src="love.gif" class="secret-photo" alt="Our Memory">
+        <h2>Happy Birthday Tmafff ❤️</h2>
+        <p style="font-size: 1.2rem; color: #333;">You are my favorite part of every universe.</p>
+    </div>
+
+    <script>
+        const container = document.getElementById('text-container');
+        const str = "ERROR: REALITY_COLLAPSING";
+        const letters = [];
+
+        str.split('').forEach((char) => {
+            const span = document.createElement('span');
+            span.innerText = char === " " ? "\u00A0" : char;
+            span.className = 'letter';
+            container.appendChild(span);
+            letters.push({ el: span, vx: 0, vy: 0 });
+        });
+
+        setTimeout(() => { document.getElementById('hole').style.display = 'block'; }, 1000);
+
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            document.getElementById('hole').style.left = mouseX + 'px';
+            document.getElementById('hole').style.top = mouseY + 'px';
+        });
+
+        function animate() {
+            letters.forEach((l) => {
+                const rect = l.el.getBoundingClientRect();
+                const dx = mouseX - (rect.left + rect.width / 2);
+                const dy = mouseY - (rect.top + rect.height / 2);
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 250) {
+                    const force = (250 - dist) / 250;
+                    l.vx += dx * force * 0.08;
+                    l.vy += dy * force * 0.08;
+                }
+
+                l.vx *= 0.92;
+                l.vy *= 0.92;
+                l.el.style.transform = `translate(${l.vx}px, ${l.vy}px) rotate(${l.vx * 0.5}deg)`;
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Secret Phrase Logic
+        let typed = "";
+        window.addEventListener('keydown', (e) => {
+            typed += e.key.toUpperCase();
+            if (typed.includes("SANDOURA")) {
+                document.getElementById('final-screen').style.display = 'flex';
+                // Trigger a small haptic vibration if on mobile
+                if (window.navigator.vibrate) window.navigator.vibrate(200);
+            }
+        });
+    </script>
+</body>
+</html>

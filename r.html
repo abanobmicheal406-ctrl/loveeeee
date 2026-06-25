@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Written in the Stars | 2026</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200&display=swap');
+
+        body, html {
+            margin: 0; padding: 0; height: 100vh; width: 100vw;
+            background: #000;
+            overflow: hidden; font-family: 'Montserrat', sans-serif;
+        }
+
+        #starCanvas { position: fixed; top: 0; left: 0; z-index: 1; cursor: crosshair; }
+
+        .ui-layer {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center; z-index: 10; pointer-events: none;
+        }
+
+        .final-message {
+            opacity: 0; transition: 5s cubic-bezier(0.4, 0, 0.2, 1);
+            color: white; font-family: 'Cinzel', serif;
+        }
+
+        .final-message h1 { 
+            font-size: 3.5rem; letter-spacing: 20px; margin: 0;
+            background: linear-gradient(to bottom, #fff, #d4af37);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.4));
+        }
+
+        .final-message p { letter-spacing: 8px; font-size: 0.7rem; color: #d4af37; margin-top: 20px; text-transform: uppercase; }
+
+        .instruction {
+            position: fixed; bottom: 40px; width: 100%; text-align: center;
+            color: rgba(212, 175, 55, 0.6); letter-spacing: 6px; font-size: 0.6rem;
+            z-index: 20; text-transform: uppercase; transition: 1s;
+        }
+
+        .audio-hint {
+            position: fixed; top: 20px; right: 20px; color: #d4af37;
+            font-size: 0.5rem; letter-spacing: 2px; opacity: 0.4; z-index: 20;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="audio-hint">[ AUDIO ENABLED ]</div>
+    <canvas id="starCanvas"></canvas>
+    
+    <div class="ui-layer">
+        <div class="final-message" id="reveal">
+            <h1>ALWAYS</h1>
+            <p>YOU are my favourite PUPPY,<br>HAPPY BIRTHDAY ❤️❤️❤️❤️,<br>MY 7 SECONDS ❤️❤️ </p>
+        </div>
+    </div>
+
+    <div class="instruction" id="guide">Tap the void to align the stars</div>
+
+    <script>
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        let heartPoints = [];
+        let connections = [];
+        let particles = [];
+        let shootingStars = [];
+        let clickCount = 0;
+        const totalNeeded = 16; 
+        let mouse = { x: 0, y: 0 };
+
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioCtx();
+
+        function playChime(freq) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 2);
+        }
+
+        function createBurst(x, y) {
+            for(let i=0; i<12; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vX: (Math.random() - 0.5) * 3,
+                    vY: (Math.random() - 0.5) * 3,
+                    life: 1.0,
+                    size: Math.random() * 2,
+                    color: Math.random() > 0.5 ? "#fff" : "#d4af37"
+                });
+            }
+        }
+
+        function createShootingStar() {
+            if (Math.random() < 0.005) {
+                shootingStars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * (canvas.height / 2),
+                    len: Math.random() * 80 + 20,
+                    speed: Math.random() * 10 + 5,
+                    opacity: 1
+                });
+            }
+        }
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            heartPoints = [];
+            for (let i = 0; i < totalNeeded; i++) {
+                const t = (i / totalNeeded) * Math.PI * 2;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                heartPoints.push({ 
+                    x: canvas.width/2 + x * 18, 
+                    y: canvas.height/2 + y * 18,
+                    origX: x, origY: y
+                });
+            }
+            stars = [];
+            for(let i=0; i<250; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                    size: Math.random() * 1.5, blink: Math.random(),
+                    vX: (Math.random() - 0.5) * 0.05, vY: (Math.random() - 0.5) * 0.05
+                });
+            }
+        }
+
+        function draw() {
+            // Background & Nebula Glow
+            const grad = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 500);
+            grad.addColorStop(0, "#05051a");
+            grad.addColorStop(1, "#000");
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Shooting Stars
+            createShootingStar();
+            shootingStars.forEach((s, i) => {
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(255, 255, 255, ${s.opacity})`;
+                ctx.moveTo(s.x, s.y);
+                ctx.lineTo(s.x + s.len, s.y + s.len / 2);
+                ctx.stroke();
+                s.x += s.speed; s.y += s.speed / 2;
+                s.opacity -= 0.01;
+                if (s.opacity <= 0) shootingStars.splice(i, 1);
+            });
+
+            // Twinkling Background Stars
+            stars.forEach(s => {
+                s.x += s.vX; s.y += s.vY;
+                ctx.globalAlpha = 0.3 + Math.abs(Math.sin(Date.now() * 0.001 + s.blink * 100)) * 0.7;
+                ctx.fillStyle = "white";
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill();
+            });
+
+            // Beating Animation Logic
+            let scale = 1;
+            if (clickCount >= totalNeeded) {
+                scale = 1 + Math.sin(Date.now() * 0.002) * 0.03;
+            }
+
+            // Draw Constellation Lines
+            ctx.globalAlpha = 1;
+            if (connections.length > 0) {
+                ctx.beginPath();
+                ctx.setLineDash(clickCount >= totalNeeded ? [] : [3, 6]);
+                ctx.strokeStyle = clickCount >= totalNeeded ? "rgba(212, 175, 55, 0.8)" : "rgba(212, 175, 55, 0.3)";
+                
+                const startX = canvas.width/2 + heartPoints[0].origX * 18 * scale;
+                const startY = canvas.height/2 + heartPoints[0].origY * 18 * scale;
+                ctx.moveTo(startX, startY);
+
+                for(let i=1; i < connections.length; i++) {
+                    const px = canvas.width/2 + heartPoints[i].origX * 18 * scale;
+                    const py = canvas.height/2 + heartPoints[i].origY * 18 * scale;
+                    ctx.lineTo(px, py);
+                }
+                if (clickCount >= totalNeeded) ctx.closePath();
+                ctx.stroke();
+            }
+
+            // Draw Stars at Points
+            connections.forEach((c, i) => {
+                const px = canvas.width/2 + heartPoints[i].origX * 18 * scale;
+                const py = canvas.height/2 + heartPoints[i].origY * 18 * scale;
+                ctx.shadowBlur = 15; ctx.shadowColor = "#d4af37";
+                ctx.fillStyle = "#fff";
+                ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+
+            // Particles Burst update
+            particles.forEach((p, i) => {
+                p.x += p.vX; p.y += p.vY; p.life -= 0.02;
+                if (p.life <= 0) particles.splice(i, 1);
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX; mouse.y = e.clientY;
+        });
+
+        window.addEventListener('mousedown', (e) => {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            if (clickCount < totalNeeded) {
+                const p = heartPoints[clickCount];
+                connections.push(p);
+                createBurst(p.x, p.y);
+                playChime(440 + (clickCount * 30)); 
+                clickCount++;
+
+                if(clickCount === totalNeeded) {
+                    document.getElementById('reveal').style.opacity = "1";
+                    document.getElementById('guide').style.opacity = "0";
+                    playChime(880); playChime(1100);
+                }
+            }
+        });
+
+        window.addEventListener('resize', init);
+        init();
+        draw();
+    </script>
+</body>
+</html>

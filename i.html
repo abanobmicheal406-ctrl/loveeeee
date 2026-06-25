@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Memory Jar - Sandra</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --pink: #ff4d6d;
+            --soft-pink: #ffcad4;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: radial-gradient(circle at center, #2d1b24 0%, #0f0f0f 100%);
+            color: white;
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- SNOW EFFECT --- */
+        .snow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicking through the snow */
+            z-index: 1;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh); }
+        }
+
+        /* --- SANDRA NAME STYLING --- */
+        .recipient-name {
+            font-family: 'Georgia', serif;
+            font-size: 3.5rem;
+            font-style: italic;
+            color: var(--soft-pink);
+            text-shadow: 0 0 15px rgba(255, 202, 212, 0.6), 0 0 30px rgba(255, 77, 109, 0.4);
+            margin-bottom: 10px;
+            z-index: 2;
+            animation: fadeIn 4s ease;
+        }
+
+        .instructions {
+            margin-bottom: 30px;
+            text-align: center;
+            animation: fadeIn 3s ease;
+            z-index: 2;
+        }
+
+        .instructions h1 {
+            font-weight: 200;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .instructions p {
+            color: var(--soft-pink);
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        .jar-container {
+            position: relative;
+            width: 170px;
+            height: 240px;
+            background: var(--glass);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 40px 40px 70px 70px;
+            backdrop-filter: blur(12px);
+            cursor: pointer;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 15px;
+            justify-content: center;
+            align-content: flex-end;
+            box-shadow: 0 0 40px rgba(255, 77, 109, 0.1);
+            animation: pulse 4s infinite ease-in-out;
+            transition: transform 0.3s;
+            z-index: 2;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 77, 109, 0.1); }
+            50% { transform: scale(1.03); box-shadow: 0 0 40px rgba(255, 77, 109, 0.2); }
+        }
+
+        .jar-container::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            width: 90px; height: 22px;
+            background: #a67c52;
+            border-radius: 6px;
+            border-bottom: 3px solid #8d623b;
+        }
+
+        .mini-note {
+            width: 22px; height: 16px;
+            margin: 2px;
+            border-radius: 2px;
+            transform: rotate(var(--r));
+            background: var(--color);
+            opacity: 0.5;
+        }
+
+        #active-note {
+            position: absolute;
+            width: 270px;
+            padding: 15px 15px 45px 15px;
+            background: #fff;
+            color: #333;
+            border-radius: 2px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            display: none;
+            z-index: 100;
+            transform: scale(0) rotate(-5deg);
+            transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .photo-area {
+            width: 100%;
+            height: 210px;
+            background: #f9f9f9;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid #eee;
+            position: relative;
+        }
+
+        .photo-area img, .photo-area video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        #note-text {
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            margin: 0;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .active-note-visible {
+            display: block !important;
+            transform: scale(1) rotate(0deg) !important;
+        }
+
+        .shake { animation: shake 0.5s ease; }
+        @keyframes shake {
+            0% { transform: rotate(0); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+            100% { transform: rotate(0); }
+        }
+
+        .controls {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+            z-index: 2;
+        }
+
+        .btn {
+            background: none;
+            border: 1px solid rgba(255, 202, 212, 0.3);
+            color: var(--soft-pink);
+            padding: 10px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--soft-pink); }
+
+        #music-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="snow-container" id="snow-layer"></div>
+
+    <audio id="loveSong" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="music-toggle" onclick="toggleMusic()">🔊</button>
+
+    <div class="recipient-name">Sandra</div>
+
+    <div class="instructions">
+        <h1>The Memory Jar</h1>
+        <p>Pick a note for a description</p>
+    </div>
+
+    <div class="jar-container" id="jar" onclick="openNote()"></div>
+
+    <div id="active-note" onclick="closeNote()">
+        <div class="photo-area">
+            <img id="note-img" src="" alt="Memory">
+            <video id="note-video" style="display:none;" controls playsinline></video>
+        </div>
+        <p id="note-text"></p>
+        <p style="font-size: 0.5rem; color: #bbb; text-align: center; margin-top: 15px; letter-spacing: 1px;">TAP TO RETURN</p>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="location.reload()">REFILL</button>
+        <a href="mailto:your-email@example.com?subject=Memory Jar ❤️" class="btn">SEND MESSAGE</a>
+    </div>
+
+    <script>
+        // --- SNOW GENERATOR ---
+        function createSnow() {
+            const container = document.getElementById('snow-layer');
+            const flakeCount = 60;
+
+            for (let i = 0; i < flakeCount; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                
+                const size = Math.random() * 4 + 2 + 'px';
+                const pos = Math.random() * 100 + '%';
+                const delay = Math.random() * 5 + 's';
+                const duration = Math.random() * 3 + 4 + 's';
+
+                flake.style.width = size;
+                flake.style.height = size;
+                flake.style.left = pos;
+                flake.style.animationDelay = delay;
+                flake.style.animationDuration = duration;
+                flake.style.opacity = Math.random();
+
+                container.appendChild(flake);
+            }
+        }
+        createSnow();
+
+        const memories = [
+            { type: "video", text: "This laugh is my favorite sound, also make me forget the world", url: "laugh.mov" },
+            { type: "image", text: "Sending you all my love today!", url: "love.gif" },
+            { type: "image", text: "Happy Birthday to my favorite person in the world.", url: "./photo30.jpg" },
+            { type: "image", text: "The calm in your eyes makes the world go quiet.", url: "./photo5.JPG" },
+            { type: "image", text: "My heart skips a beat for you.", url: "./photo4.JPG" }
+        ];
+
+        const jar = document.getElementById('jar');
+        const activeNote = document.getElementById('active-note');
+        const noteText = document.getElementById('note-text');
+        const noteImg = document.getElementById('note-img');
+        const noteVideo = document.getElementById('note-video');
+        const music = document.getElementById('loveSong');
+        const colors = ['#ffadad', '#ffd6a5', '#fdffb6', '#caffbf', '#a0c4ff', '#ffc6ff'];
+        
+        let musicStarted = false;
+
+        for (let i = 0; i < 22; i++) {
+            const div = document.createElement('div');
+            div.className = 'mini-note';
+            div.style.setProperty('--r', (Math.random() * 40 - 20) + 'deg');
+            div.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
+            jar.appendChild(div);
+        }
+
+        function openNote() {
+            if (!musicStarted) {
+                music.play().catch(() => {});
+                musicStarted = true;
+            }
+
+            if (activeNote.classList.contains('active-note-visible')) return;
+
+            jar.classList.add('shake');
+            const memory = memories[Math.floor(Math.random() * memories.length)];
+            
+            setTimeout(() => {
+                jar.classList.remove('shake');
+                noteText.innerText = memory.text;
+
+                if (memory.type === "video") {
+                    noteImg.style.display = "none";
+                    noteVideo.style.display = "block";
+                    noteVideo.src = memory.url;
+                    noteVideo.play();
+                } else {
+                    noteVideo.style.display = "none";
+                    noteVideo.pause();
+                    noteImg.style.display = "block";
+                    noteImg.src = memory.url;
+                }
+
+                activeNote.classList.add('active-note-visible');
+                confetti({ particleCount: 40, spread: 70, origin: { y: 0.8 }, colors: ['#ff4d6d', '#ffffff', '#ffcad4'] });
+            }, 500);
+        }
+
+        function closeNote() {
+            activeNote.classList.remove('active-note-visible');
+            noteVideo.pause();
+            noteVideo.src = "";
+        }
+
+        function toggleMusic() {
+            const btn = document.getElementById('music-toggle');
+            if (music.paused) { music.play(); btn.innerText = "🔊"; } 
+            else { music.pause(); btn.innerText = "🔇"; }
+        }
+    </script>
+</body>
+</html>

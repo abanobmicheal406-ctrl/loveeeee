@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sandra ♥</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,600&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#fdf6f0;color:#3d2030;font-family:'Cormorant Garamond',serif;overflow-x:hidden}
+
+/* ── petal bg ── */
+#star-bg{position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%}
+
+/* ── nav ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:center;flex-wrap:wrap;gap:1rem 2rem;
+  padding:1.2rem 1rem;
+  background:linear-gradient(to bottom,rgba(253,246,240,.95),rgba(253,246,240,0));
+  border-bottom:1px solid rgba(210,140,155,.15);
+}
+nav a{
+  font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.3em;
+  color:rgba(180,90,110,.55);text-decoration:none;transition:color .3s;
+}
+nav a:hover{color:#c0506a}
+
+/* ── sections ── */
+section{
+  position:relative;z-index:10;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:5rem 1.5rem 3rem;
+  gap:1.5rem;
+}
+
+/* ── chip / title ── */
+.chip{
+  font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.4em;
+  color:#c0506a;text-transform:uppercase;text-align:center;
+}
+.title{
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;
+  font-size:clamp(1.8rem,4vw,2.8rem);color:#3d2030;text-align:center;
+}
+.desc{
+  font-style:italic;font-size:.95rem;color:rgba(61,32,48,.45);
+  text-align:center;max-width:440px;line-height:1.8;
+}
+
+/* ── hero ── */
+#hero .hero-name{
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;
+  font-size:clamp(5rem,20vw,14rem);line-height:.9;letter-spacing:-.02em;
+  background:linear-gradient(135deg,#e8728a 0%,#c0506a 35%,#e8a0b0 70%,#c0506a 100%);
+  background-size:300% 300%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 6s ease infinite;
+}
+@keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+#hero .tagline{
+  font-style:italic;font-size:clamp(1rem,2vw,1.2rem);
+  color:rgba(61,32,48,.45);max-width:400px;line-height:1.8;text-align:center;
+}
+.scroll-down{
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.35em;color:#c0506a;
+  animation:bob 2.2s ease-in-out infinite;
+}
+.scroll-down span{display:block;width:1px;height:48px;background:linear-gradient(to bottom,#c0506a,transparent)}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* ── 3D heart canvas ── */
+#heart-canvas-wrap{width:min(460px,88vw);height:min(460px,88vw);position:relative}
+#three-canvas{width:100%!important;height:100%!important;display:block}
+.heart-label{font-style:italic;font-size:.85rem;color:rgba(192,80,106,.5);text-align:center}
+
+/* ── piano ── */
+#piano-wrap{position:relative;height:170px;width:min(560px,90vw)}
+.p-white{
+  position:absolute;bottom:0;
+  background:linear-gradient(to bottom,#fff8f5,#f5e0e5);
+  border:1px solid rgba(192,80,106,.2);border-radius:0 0 5px 5px;
+  cursor:pointer;transition:transform .08s,filter .08s;
+  box-shadow:2px 4px 8px rgba(192,80,106,.12);
+}
+.p-white:hover,.p-white.on{transform:translateY(3px);filter:brightness(.88)}
+.p-black{
+  position:absolute;bottom:0;z-index:2;
+  background:linear-gradient(to bottom,#4a1828,#2d0e18);
+  border:1px solid rgba(192,80,106,.25);border-radius:0 0 4px 4px;
+  cursor:pointer;transition:transform .07s,filter .07s;
+  box-shadow:2px 5px 10px rgba(0,0,0,.25);
+}
+.p-black:hover,.p-black.on{transform:translateY(2px);filter:brightness(1.5)}
+.note-pop{
+  position:fixed;pointer-events:none;z-index:999;
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.5rem;
+  color:#c0506a;animation:noteFly .85s forwards;
+}
+@keyframes noteFly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-70px) scale(1.6)}}
+#piano-hint{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.28em;color:rgba(192,80,106,.5);text-align:center}
+
+/* ── wish jar ── */
+#jar-canvas{display:block;background:transparent}
+.wish-row{display:flex;gap:.7rem;width:min(400px,88vw);flex-wrap:wrap;justify-content:center}
+.wish-inp{
+  flex:1;min-width:180px;
+  background:rgba(255,255,255,.7);border:1px solid rgba(192,80,106,.22);
+  padding:.7rem 1rem;font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1rem;color:#3d2030;outline:none;transition:border-color .3s;
+}
+.wish-inp:focus{border-color:rgba(192,80,106,.55)}
+.wish-btn{
+  padding:.7rem 1.5rem;background:transparent;
+  border:1px solid #c0506a;color:#c0506a;
+  font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.25em;
+  cursor:pointer;transition:all .3s;
+}
+.wish-btn:hover{background:#c0506a;color:#fff}
+#wish-tags{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;max-width:440px}
+.wish-tag{
+  background:rgba(192,80,106,.08);border:1px solid rgba(192,80,106,.2);
+  padding:.28rem .8rem;border-radius:20px;
+  font-size:.85rem;font-style:italic;color:#c0506a;
+  animation:popIn .35s ease;
+}
+@keyframes popIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+
+/* ── birthday btn ── */
+#bday-btn{
+  padding:.85rem 2.2rem;background:transparent;
+  border:1px solid #c0506a;color:#c0506a;
+  font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.3em;
+  cursor:pointer;transition:all .35s;
+}
+#bday-btn:hover,#bday-btn.playing{background:#c0506a;color:#fff}
+#bday-btn.playing{pointer-events:none}
+#bday-msg{
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;
+  color:rgba(192,80,106,.75);min-height:1.4rem;text-align:center;
+}
+
+/* ── puzzle ── */
+.match-stats{display:flex;gap:2.5rem;margin-bottom:1rem}
+.stat-val{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2.2rem;color:#c0506a;text-align:center}
+.stat-lbl{font-family:'Cinzel',serif;font-size:.45rem;letter-spacing:.25em;color:rgba(61,32,48,.35);text-align:center}
+#match-msg{font-style:italic;color:#c0506a;font-size:1rem;min-height:1.5rem;text-align:center}
+#puzzle-canvas{display:block;cursor:pointer;border:1px solid rgba(192,80,106,.15);border-radius:2px}
+.match-btn{
+  margin-top:1rem;padding:.6rem 1.8rem;background:transparent;
+  border:1px solid rgba(192,80,106,.4);color:#c0506a;
+  font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.28em;
+  cursor:pointer;transition:all .3s;
+}
+.match-btn:hover{background:#c0506a;color:#fff}
+
+/* ── poem composer ── */
+.builder{width:min(560px,92vw)}
+#poem-lines{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.2rem}
+.poem-row{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+.poem-row-label{
+  font-family:'Cinzel',serif;font-size:.4rem;letter-spacing:.22em;
+  color:rgba(192,80,106,.35);min-width:36px;
+}
+.pw{
+  padding:.32rem .8rem;background:rgba(255,255,255,.6);
+  border:1px solid rgba(192,80,106,.15);color:rgba(61,32,48,.5);
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.92rem;
+  cursor:pointer;border-radius:2px;transition:all .22s;
+}
+.pw:hover{background:rgba(192,80,106,.08);border-color:rgba(192,80,106,.5);color:#c0506a}
+.pw.chosen{background:rgba(192,80,106,.12);border-color:#c0506a;color:#c0506a;pointer-events:none}
+#poem-canvas{display:block;margin-bottom:.8rem}
+#poem-output{
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;
+  font-size:1.1rem;line-height:2;color:#3d2030;
+  min-height:50px;white-space:pre-line;text-align:center;padding:.4rem;
+}
+.gen-btn{
+  width:100%;margin-top:1rem;padding:.75rem;background:transparent;
+  border:1px solid #c0506a;color:#c0506a;
+  font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.35em;
+  cursor:pointer;transition:all .3s;
+}
+.gen-btn:hover{background:#c0506a;color:#fff}
+
+/* ── photo booth ── */
+#booth-wrap{position:relative;width:min(500px,92vw)}
+#booth-canvas{display:block;width:100%;border:2px solid rgba(192,80,106,.2);border-radius:4px;background:#fff8f5}
+.sticker-row{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem}
+.sticker-btn{
+  font-size:1.6rem;padding:.3rem .5rem;background:rgba(255,255,255,.8);
+  border:1px solid rgba(192,80,106,.18);border-radius:6px;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+}
+.sticker-btn:hover{transform:scale(1.25);box-shadow:0 4px 12px rgba(192,80,106,.2)}
+.sticker-btn.active{border-color:#c0506a;background:rgba(192,80,106,.1);transform:scale(1.2)}
+.booth-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem}
+.booth-btn{
+  padding:.55rem 1.4rem;background:transparent;
+  border:1px solid rgba(192,80,106,.35);color:#c0506a;
+  font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.25em;
+  cursor:pointer;transition:all .3s;border-radius:2px;
+}
+.booth-btn:hover{background:#c0506a;color:#fff}
+#booth-hint{font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.25em;color:rgba(192,80,106,.45);text-align:center;margin-top:.4rem}
+
+/* ── draw heart ── */
+#draw-canvas{display:block;border:2px solid rgba(192,80,106,.2);border-radius:4px;background:#fff8f5;cursor:crosshair}
+.draw-controls{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem;align-items:center}
+.color-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .2s,border-color .2s}
+.color-dot:hover{transform:scale(1.2)}
+.color-dot.active{border-color:#3d2030;transform:scale(1.15)}
+.draw-btn{
+  padding:.5rem 1.2rem;background:transparent;
+  border:1px solid rgba(192,80,106,.35);color:#c0506a;
+  font-family:'Cinzel',serif;font-size:.45rem;letter-spacing:.22em;
+  cursor:pointer;transition:all .3s;border-radius:2px;
+}
+.draw-btn:hover{background:#c0506a;color:#fff}
+.brush-sizes{display:flex;gap:.4rem;align-items:center}
+.bs{width:20px;height:20px;border-radius:50%;background:#c0506a;cursor:pointer;opacity:.4;transition:opacity .2s,transform .2s}
+.bs:hover,.bs.active{opacity:1;transform:scale(1.1)}
+#draw-msg{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.9rem;color:rgba(192,80,106,.6);text-align:center;min-height:1.2rem}
+
+/* ── clock ── */
+#clock-canvas{display:block}
+
+/* ── petals ── */
+#petal-canvas{display:block;border:1px solid rgba(192,80,106,.1);border-radius:2px}
+.petal-hint{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.28em;color:rgba(192,80,106,.5);animation:pulse 2.5s infinite}
+
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* footer */
+footer{position:relative;z-index:10;padding:3rem;text-align:center;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.3em;color:rgba(61,32,48,.2)}
+
+/* divider */
+.divider{width:1px;height:56px;background:linear-gradient(to bottom,#c0506a,transparent);margin:0 auto}
+</style>
+</head>
+<body>
+
+<canvas id="star-bg"></canvas>
+
+<nav>
+  <a href="#hero">Home</a>
+  <a href="#heart-sec">Heart</a>
+  <a href="#piano-sec">Piano</a>
+  <a href="#wish-sec">Wishes</a>
+  <a href="#match-sec">Puzzle</a>
+  <a href="#builder-sec">Poem</a>
+  <a href="#booth-sec">Photo</a>
+  <a href="#draw-sec">Draw</a>
+  <a href="#clock-sec">Time</a>
+  <a href="#petal-sec">Petals</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <p class="chip">A universe for her</p>
+  <h1 class="hero-name">Sandra</h1>
+  <p class="tagline">Written in starlight — every heartbeat, yours.</p>
+  <div class="divider"></div>
+  <div class="scroll-down"><span></span>Scroll to explore</div>
+</section>
+
+<!-- 3D HEART -->
+<section id="heart-sec">
+  <p class="chip">Geometry of Love</p>
+  <h2 class="title">Her heart, in three dimensions</h2>
+  <p class="desc">Drag to spin it. Her name is carved in gold at the centre.</p>
+  <div id="heart-canvas-wrap">
+    <canvas id="three-canvas"></canvas>
+  </div>
+  <p class="heart-label">drag to rotate · pinch to feel</p>
+</section>
+
+<!-- PIANO -->
+<section id="piano-sec">
+  <p class="chip">Activity I · Music</p>
+  <h2 class="title">Play a melody for Sandra</h2>
+  <p class="desc">Click keys or press A–K on your keyboard. Or let her birthday song play itself.</p>
+  <button id="bday-btn">🎂 Play Happy Birthday, Sandra ♥</button>
+  <div id="piano-wrap"></div>
+  <p id="piano-hint">Keys: A S D F G H J K</p>
+  <div id="bday-msg"></div>
+</section>
+
+<!-- WISH JAR -->
+<section id="wish-sec">
+  <p class="chip">Activity II · Dreams</p>
+  <h2 class="title">Fill her wish jar</h2>
+  <p class="desc">Write a wish and watch it float inside the jar forever.</p>
+  <canvas id="jar-canvas" width="360" height="300"></canvas>
+  <div class="wish-row">
+    <input class="wish-inp" id="wish-inp" type="text" placeholder="A wish for Sandra…" maxlength="36">
+    <button class="wish-btn" id="wish-btn">Add ♥</button>
+  </div>
+  <div id="wish-tags"></div>
+</section>
+
+<!-- LOVE MOSAIC PUZZLE -->
+<section id="match-sec">
+  <p class="chip">Activity III · Puzzle</p>
+  <h2 class="title">Reassemble sandoura's heart</h2>
+  <p class="desc">The heart has been scattered. Click a tile then click where it belongs to restore it.</p>
+  <div class="match-stats">
+    <div><div class="stat-val" id="mv">0</div><div class="stat-lbl">Moves</div></div>
+    <div><div class="stat-val" id="pr">0</div><div class="stat-lbl">Done</div></div>
+    <div><div class="stat-val" id="tm">0s</div><div class="stat-lbl">Time</div></div>
+  </div>
+  <p id="match-msg"></p>
+  <canvas id="puzzle-canvas"></canvas>
+  <button class="match-btn" id="match-new">↺ Shuffle Again</button>
+</section>
+
+<!-- POEM COMPOSER -->
+<section id="builder-sec">
+  <p class="chip">Activity IV · Poetry</p>
+  <h2 class="title">Write her a poem</h2>
+  <p class="desc">Click one word from each line to compose a unique poem for Sandra. Watch the ink flow.</p>
+  <div class="builder">
+    <div id="poem-lines"></div>
+    <canvas id="poem-canvas" width="560" height="220"></canvas>
+    <div id="poem-output"></div>
+    <button class="gen-btn" id="poem-reset">✦ New Poem ✦</button>
+  </div>
+</section>
+
+<!-- PHOTO BOOTH -->
+<section id="booth-sec">
+  <p class="chip">Activity VI · Photo Booth</p>
+  <h2 class="title">Sandra's photo booth</h2>
+  <p class="desc">Choose a sticker, click the canvas to place it. Create YOUR perfect photo frame.</p>
+  <div id="booth-wrap">
+    <canvas id="booth-canvas" width="500" height="340"></canvas>
+    <div class="sticker-row" id="sticker-row">
+      <button class="sticker-btn active" data-s="🌸">🌸</button>
+      <button class="sticker-btn" data-s="💕">💕</button>
+      <button class="sticker-btn" data-s="✨">✨</button>
+      <button class="sticker-btn" data-s="🌷">🌷</button>
+      <button class="sticker-btn" data-s="💫">💫</button>
+      <button class="sticker-btn" data-s="🦋">🦋</button>
+      <button class="sticker-btn" data-s="🌺">🌺</button>
+      <button class="sticker-btn" data-s="💖">💖</button>
+      <button class="sticker-btn" data-s="⭐">⭐</button>
+    </div>
+    <div class="booth-actions">
+      <button class="booth-btn" id="booth-frame">♥ Add Love Frame</button>
+      <button class="booth-btn" id="booth-clear">↺ Clear</button>
+      <button class="booth-btn" id="booth-save">↓ Save Image</button>
+    </div>
+    <p id="booth-hint">Click anywhere on the canvas to place your sticker</p>
+  </div>
+</section>
+
+<!-- DRAW HEART -->
+<section id="draw-sec">
+  <p class="chip">Activity VII · Draw</p>
+  <h2 class="title">Draw a heart for MISHA</h2>
+  <p class="desc">Hold and drag to draw. I'll know it came from yours.</p>
+  <canvas id="draw-canvas" width="520" height="360"></canvas>
+  <div class="draw-controls">
+    <div class="brush-sizes">
+      <div class="bs active" data-sz="3" style="width:12px;height:12px"></div>
+      <div class="bs" data-sz="7" style="width:18px;height:18px"></div>
+      <div class="bs" data-sz="14" style="width:24px;height:24px"></div>
+    </div>
+    <div class="color-dot active" data-c="#c0506a" style="background:#c0506a"></div>
+    <div class="color-dot" data-c="#e8728a" style="background:#e8728a"></div>
+    <div class="color-dot" data-c="#f5a0b5" style="background:#f5a0b5"></div>
+    <div class="color-dot" data-c="#c0506a" style="background:#c0506a"></div>
+    <div class="color-dot" data-c="#8b5e7a" style="background:#8b5e7a"></div>
+    <button class="draw-btn" id="draw-heart-btn">♥ Auto-draw Heart</button>
+    <button class="draw-btn" id="draw-clear">↺ Clear</button>
+  </div>
+  <p id="draw-msg"></p>
+</section>
+
+<!-- CLOCK -->
+<section id="clock-sec">
+  <p class="chip">Time</p>
+  <h2 class="title">Every second, yours</h2>
+  <p class="desc">A living clock counting every moment spent loving Sandra.</p>
+  <canvas id="clock-canvas" width="320" height="320"></canvas>
+</section>
+
+<!-- PETALS -->
+<section id="petal-sec">
+  <p class="chip">Activity V · Touch</p>
+  <h2 class="title">Scatter petals for her</h2>
+  <p class="desc">Move your cursor across the canvas to bloom roses.</p>
+  <canvas id="petal-canvas"></canvas>
+  <p class="petal-hint">Move to bloom ✦</p>
+</section>
+
+<footer>Woven in starlight · For Sandra · ♥ · 2026</footer>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════
+// LIGHT ROMANTIC BACKGROUND — floating blossoms
+// ═══════════════════════════════════════════
+(function(){
+  var c=document.getElementById('star-bg'),ctx=c.getContext('2d');
+  var W,H,petals=[];
+  function init(){
+    W=c.width=window.innerWidth;H=c.height=window.innerHeight;
+    petals=[];
+    for(var i=0;i<55;i++){
+      petals.push({
+        x:Math.random()*W,y:Math.random()*H,
+        r:2+Math.random()*5,
+        vx:(Math.random()-.5)*.3,vy:.15+Math.random()*.35,
+        rot:Math.random()*Math.PI*2,rv:(Math.random()-.5)*.015,
+        hue:340+Math.random()*30,a:.07+Math.random()*.13
+      });
+    }
+  }
+  init();window.addEventListener('resize',init);
+  function drawPetal(p){
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.globalAlpha=p.a;
+    var g=ctx.createRadialGradient(0,-p.r*.3,0,0,0,p.r*1.1);
+    g.addColorStop(0,'hsla('+p.hue+',80%,82%,1)');
+    g.addColorStop(1,'hsla('+(p.hue+12)+',70%,68%,.3)');
+    ctx.fillStyle=g;
+    ctx.beginPath();ctx.moveTo(0,-p.r);
+    ctx.bezierCurveTo(p.r*.65,-p.r*.55,p.r*.65,p.r*.55,0,p.r);
+    ctx.bezierCurveTo(-p.r*.65,p.r*.55,-p.r*.65,-p.r*.55,0,-p.r);
+    ctx.fill();ctx.restore();
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // soft gradient sky
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'rgba(255,240,245,.45)');
+    g.addColorStop(.5,'rgba(253,246,240,.2)');
+    g.addColorStop(1,'rgba(255,235,240,.35)');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    petals.forEach(function(p){
+      p.x+=p.vx+Math.sin(p.y*.008)*.2;
+      p.y+=p.vy;
+      p.rot+=p.rv;
+      if(p.y>H+20)p.y=-20;
+      if(p.x>W+20)p.x=-20;
+      if(p.x<-20)p.x=W+20;
+      drawPetal(p);
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════
+// THREE.JS HEART with Sandra
+// ═══════════════════════════════════════════
+window.addEventListener('load', function(){
+  var wrap=document.getElementById('heart-canvas-wrap');
+  var SIZE=wrap.offsetWidth;
+  if(SIZE<10)SIZE=400;
+  var canvas=document.getElementById('three-canvas');
+  var renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(SIZE,SIZE);
+  renderer.setClearColor(0x000000,0);
+
+  var scene=new THREE.Scene();
+  var camera=new THREE.PerspectiveCamera(42,1,.1,100);
+  camera.position.z=4.5;
+
+  // heart shape
+  var shape=new THREE.Shape();
+  shape.moveTo(0,.5);
+  shape.bezierCurveTo(0,.5,-.5,1.2,-1,1.2);
+  shape.bezierCurveTo(-1.7,1.2,-1.7,.2,-1.7,.2);
+  shape.bezierCurveTo(-1.7,-.5,-1,-1.3,0,-1.9);
+  shape.bezierCurveTo(1,-1.3,1.7,-.5,1.7,.2);
+  shape.bezierCurveTo(1.7,.2,1.7,1.2,1,1.2);
+  shape.bezierCurveTo(.5,1.2,0,.5,0,.5);
+
+  var geo=new THREE.ExtrudeGeometry(shape,{depth:.4,bevelEnabled:true,bevelSegments:8,steps:3,bevelSize:.09,bevelThickness:.09});
+  geo.center();
+
+  var mat=new THREE.MeshPhysicalMaterial({color:0xffdde5,emissive:0xd46075,emissiveIntensity:.35,metalness:.05,roughness:.45,transparent:true,opacity:.97});
+  var wiremat=new THREE.MeshBasicMaterial({color:0xc0506a,wireframe:true,transparent:true,opacity:.13});
+
+  var heart=new THREE.Mesh(geo,mat);
+  var hwire=new THREE.Mesh(geo,wiremat);
+  heart.rotation.z=Math.PI;hwire.rotation.z=Math.PI;
+  heart.scale.set(.72,.72,.72);hwire.scale.set(.72,.72,.72);
+  scene.add(heart,hwire);
+
+  // Sandra name texture
+  var tc=document.createElement('canvas');tc.width=512;tc.height=128;
+  var tx=tc.getContext('2d');
+  var gr=tx.createLinearGradient(60,0,452,0);
+  gr.addColorStop(0,'#f5e8d8');gr.addColorStop(.45,'#c0506a');gr.addColorStop(1,'#c0506a');
+  tx.fillStyle=gr;
+  tx.font='italic 600 64px Georgia,serif';
+  tx.textAlign='center';tx.textBaseline='middle';
+  tx.fillText('Sandra',256,64);
+  var tex=new THREE.CanvasTexture(tc);
+  var tplane=new THREE.Mesh(
+    new THREE.PlaneGeometry(1.85,.45),
+    new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,side:THREE.DoubleSide})
+  );
+  tplane.position.set(0,-.07,.31);
+  scene.add(tplane);
+
+  // lights
+  scene.add(new THREE.AmbientLight(0xfff5e0,.6));
+  var kl=new THREE.PointLight(0xffeedd,2.4,20);kl.position.set(3,4,3);scene.add(kl);
+  var rl=new THREE.PointLight(0xc05070,1.5,20);rl.position.set(-3,-2,2);scene.add(rl);
+  var fl=new THREE.PointLight(0x8899bb,.7,20);fl.position.set(0,-4,-2);scene.add(fl);
+
+  // drag
+  var drag=false,px=0,py=0,vy=.004,vx=0,rY=0,rX=0;
+  canvas.addEventListener('mousedown',function(e){drag=true;px=e.clientX;py=e.clientY;});
+  window.addEventListener('mouseup',function(){drag=false;});
+  window.addEventListener('mousemove',function(e){
+    if(!drag)return;
+    vy=(e.clientX-px)*.012;vx=(e.clientY-py)*.009;px=e.clientX;py=e.clientY;
+  });
+  canvas.addEventListener('touchstart',function(e){drag=true;px=e.touches[0].clientX;py=e.touches[0].clientY;},{passive:true});
+  window.addEventListener('touchend',function(){drag=false;});
+  window.addEventListener('touchmove',function(e){
+    if(!drag)return;
+    vy=(e.touches[0].clientX-px)*.012;vx=(e.touches[0].clientY-py)*.009;
+    px=e.touches[0].clientX;py=e.touches[0].clientY;
+  },{passive:true});
+
+  var t0=performance.now();
+  function animate(){
+    requestAnimationFrame(animate);
+    if(!drag)vy*=.97;vx*=.93;
+    rY+=vy;rX+=vx;
+    rX=Math.max(-1.2,Math.min(1.2,rX));
+    var fl2=Math.sin((performance.now()-t0)*.001)*.07;
+    heart.rotation.y=hwire.rotation.y=rY;
+    heart.rotation.x=hwire.rotation.x=rX+Math.PI;
+    heart.position.y=hwire.position.y=fl2;
+    tplane.rotation.y=rY;tplane.rotation.x=rX;tplane.position.y=fl2-.07;
+    renderer.render(scene,camera);
+  }
+  animate();
+});
+
+// ═══════════════════════════════════════════
+// PIANO + HAPPY BIRTHDAY
+// ═══════════════════════════════════════════
+(function(){
+  var audioCtx=null;
+  function getCtx(){
+    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended')audioCtx.resume();
+    return audioCtx;
+  }
+  var wrap=document.getElementById('piano-wrap');
+  var TW=Math.min(560,window.innerWidth*.9);
+  wrap.style.width=TW+'px';
+  var KW=Math.floor(TW/8);
+
+  var whites=[
+    {f:261.63,k:'a'},{f:293.66,k:'s'},{f:329.63,k:'d'},
+    {f:349.23,k:'f'},{f:392,k:'g'},{f:440,k:'h'},
+    {f:493.88,k:'j'},{f:523.25,k:'k'}
+  ];
+  var blacks=[
+    {f:277.18,pos:0},{f:311.13,pos:1},{f:369.99,pos:3},{f:415.3,pos:4},{f:466.16,pos:5}
+  ];
+  var emojis=['♥','✦','❀','♡','☆','✿','🎂','🎉'];
+
+  // Happy Birthday notes: [freq, duration_seconds]
+  var BDAY=[
+    [261.63,.35],[261.63,.15],[293.66,.5],[261.63,.5],[349.23,.5],[329.63,1],
+    [261.63,.35],[261.63,.15],[293.66,.5],[261.63,.5],[392,.5],[349.23,1],
+    [261.63,.35],[261.63,.15],[523.25,.5],[440,.5],[349.23,.5],[329.63,.5],[293.66,1],
+    [466.16,.35],[466.16,.15],[440,.5],[349.23,.5],[392,.5],[349.23,1.2]
+  ];
+
+  function playTone(freq,dur,when){
+    var ctx=getCtx();
+    var t=when||ctx.currentTime;
+    var d=dur||1;
+    var o=ctx.createOscillator(),g=ctx.createGain();
+    // warm piano-like tone: add slight harmonics
+    var o2=ctx.createOscillator(),g2=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o2.connect(g2);g2.connect(ctx.destination);
+    o.type='triangle';o.frequency.value=freq;
+    o2.type='sine';o2.frequency.value=freq*2;
+    g.gain.setValueAtTime(0.001,t);
+    g.gain.exponentialRampToValueAtTime(.28,t+.02);
+    g.gain.exponentialRampToValueAtTime(0.001,t+d*.9);
+    g2.gain.setValueAtTime(0.001,t);
+    g2.gain.exponentialRampToValueAtTime(.07,t+.01);
+    g2.gain.exponentialRampToValueAtTime(0.001,t+d*.7);
+    o.start(t);o.stop(t+d);
+    o2.start(t);o2.stop(t+d);
+  }
+
+  function spawnPop(el,emoji){
+    var r=el.getBoundingClientRect();
+    var d=document.createElement('div');
+    d.className='note-pop';
+    d.textContent=emoji||emojis[Math.floor(Math.random()*emojis.length)];
+    d.style.left=(r.left+r.width/2-10)+'px';
+    d.style.top=(r.top-10)+'px';
+    document.body.appendChild(d);
+    setTimeout(function(){d.remove();},900);
+  }
+
+  function highlightFreq(freq){
+    var note=whites.find(function(w){return Math.abs(w.f-freq)<5;});
+    if(note){
+      var el=wrap.querySelector('[data-key="'+note.k+'"]');
+      if(el){el.classList.add('on');setTimeout(function(){el.classList.remove('on');},300);spawnPop(el,'🎂');}
+    }
+  }
+
+  whites.forEach(function(n,i){
+    var el=document.createElement('div');
+    el.className='p-white';
+    el.style.left=i*KW+'px';
+    el.style.width=(KW-3)+'px';
+    el.style.height='165px';
+    el.dataset.key=n.k;
+    el.addEventListener('mousedown',function(){playTone(n.f,1);spawnPop(el);el.classList.add('on');setTimeout(function(){el.classList.remove('on');},160);});
+    wrap.appendChild(el);
+  });
+  blacks.forEach(function(n){
+    var el=document.createElement('div');
+    el.className='p-black';
+    el.style.left=(n.pos*KW+KW*.63)+'px';
+    el.style.width=(KW*.54)+'px';
+    el.style.height='105px';
+    el.addEventListener('mousedown',function(e){e.stopPropagation();playTone(n.f,1);spawnPop(el);el.classList.add('on');setTimeout(function(){el.classList.remove('on');},150);});
+    wrap.appendChild(el);
+  });
+
+  document.addEventListener('keydown',function(e){
+    if(e.repeat)return;
+    var key=e.key.toLowerCase();
+    var el=wrap.querySelector('[data-key="'+key+'"]');
+    if(el){var n=whites.find(function(w){return w.k===key;});if(n){playTone(n.f,1);spawnPop(el);el.classList.add('on');}}
+  });
+  document.addEventListener('keyup',function(e){
+    var el=wrap.querySelector('[data-key="'+e.key.toLowerCase()+'"]');
+    if(el)el.classList.remove('on');
+  });
+
+  // Happy Birthday auto-play
+  var bdayPlaying=false;
+  document.getElementById('bday-btn').addEventListener('click',function(){
+    if(bdayPlaying)return;
+    bdayPlaying=true;
+    var btn=this;btn.classList.add('playing');btn.textContent='🎶 Playing for Sandra…';
+    var ctx=getCtx();
+    var t=ctx.currentTime+.1;
+    var total=0;
+    BDAY.forEach(function(note){
+      var freq=note[0],dur=note[1];
+      playTone(freq,dur,t+total);
+      // highlight key with delay
+      (function(dt,fr){
+        setTimeout(function(){highlightFreq(fr);},Math.round(dt*1000));
+      })(total,freq);
+      total+=dur+.04;
+    });
+    var lyrics=['🎂 Happy Birthday…','🎵 to you…','🎶 Happy Birthday…','✦ Happy Birthday dear Sandra…','🎉 Happy Birthday to you! ♥'];
+    var li=0;
+    var lyrInt=setInterval(function(){
+      var msg=document.getElementById('bday-msg');
+      if(li<lyrics.length){msg.textContent=lyrics[li++];}
+      else{clearInterval(lyrInt);msg.textContent='';}
+    },total*1000/lyrics.length);
+    setTimeout(function(){
+      bdayPlaying=false;btn.classList.remove('playing');
+      btn.textContent='🎂 Play Happy Birthday, Sandra ♥';
+    },Math.round(total*1000)+600);
+  });
+})();
+
+// ═══════════════════════════════════════════
+// WISH JAR
+// ═══════════════════════════════════════════
+(function(){
+  var c=document.getElementById('jar-canvas'),ctx=c.getContext('2d');
+  var W=360,H=300,floaters=[];
+
+  function drawJar(){
+    ctx.clearRect(0,0,W,H);
+    var jx=W/2,jy=55,jw=155,jh=195;
+    // body
+    ctx.beginPath();
+    ctx.moveTo(jx-jw/2+15,jy);
+    ctx.lineTo(jx+jw/2-15,jy);
+    ctx.arcTo(jx+jw/2,jy,jx+jw/2,jy+15,15);
+    ctx.lineTo(jx+jw/2,jy+jh-15);
+    ctx.arcTo(jx+jw/2,jy+jh,jx+jw/2-15,jy+jh,15);
+    ctx.lineTo(jx-jw/2+15,jy+jh);
+    ctx.arcTo(jx-jw/2,jy+jh,jx-jw/2,jy+jh-15,15);
+    ctx.lineTo(jx-jw/2,jy+15);
+    ctx.arcTo(jx-jw/2,jy,jx-jw/2+15,jy,15);
+    ctx.closePath();
+    var g=ctx.createLinearGradient(jx-jw/2,0,jx+jw/2,0);
+    g.addColorStop(0,'rgba(192,80,106,.05)');
+    g.addColorStop(.35,'rgba(192,80,106,.13)');
+    g.addColorStop(.65,'rgba(192,80,106,.13)');
+    g.addColorStop(1,'rgba(192,80,106,.05)');
+    ctx.fillStyle=g;ctx.fill();
+    ctx.strokeStyle='rgba(192,80,106,.38)';ctx.lineWidth=1.5;ctx.stroke();
+    // lid
+    ctx.beginPath();
+    ctx.moveTo(jx-jw/2-6,jy);ctx.lineTo(jx+jw/2+6,jy);ctx.lineTo(jx+jw/2+6,jy-18);ctx.lineTo(jx-jw/2-6,jy-18);ctx.closePath();
+    ctx.fillStyle='rgba(192,80,106,.13)';ctx.fill();
+    ctx.strokeStyle='rgba(192,80,106,.38)';ctx.lineWidth=1;ctx.stroke();
+  }
+
+  function drawFloaters(){
+    floaters.forEach(function(f){
+      ctx.save();
+      ctx.globalAlpha=f.a;
+      ctx.translate(f.x,f.y);ctx.rotate(f.rot);
+      ctx.font='italic '+f.sz+'px "Cormorant Garamond",serif';
+      ctx.fillStyle=f.color;ctx.textAlign='center';
+      ctx.fillText(f.text,0,0);
+      ctx.restore();
+      f.y-=.18;f.x+=Math.sin(f.phase+f.y*.035)*.35;f.rot+=.003;f.phase+=.015;
+      if(f.y<68)f.y=240+Math.random()*20;
+    });
+  }
+
+  function addWish(text){
+    text=text.trim();if(!text)return;
+    var colors=['#c0506a','#d4a550','#8b5e7a','#a03050'];
+    floaters.push({
+      text:text.length>15?text.slice(0,13)+'…':text,
+      x:120+Math.random()*120,y:220+Math.random()*30,
+      sz:10+Math.random()*5,color:colors[Math.floor(Math.random()*4)],
+      a:.8,rot:(Math.random()-.5)*.3,phase:Math.random()*6
+    });
+    var tags=document.getElementById('wish-tags');
+    var tag=document.createElement('div');tag.className='wish-tag';tag.textContent='✦ '+text;
+    tags.appendChild(tag);
+    document.getElementById('wish-inp').value='';
+  }
+
+  document.getElementById('wish-btn').addEventListener('click',function(){addWish(document.getElementById('wish-inp').value);});
+  document.getElementById('wish-inp').addEventListener('keydown',function(e){if(e.key==='Enter')addWish(this.value);});
+
+  // seeds
+  ['endless love','forever','her smile','always'].forEach(addWish);
+  document.getElementById('wish-tags').innerHTML='';
+
+  function loop(){drawJar();drawFloaters();requestAnimationFrame(loop);}
+  loop();
+})();
+
+// ═══════════════════════════════════════════
+// HEART MOSAIC PUZZLE
+// ═══════════════════════════════════════════
+(function(){
+  var c=document.getElementById('puzzle-canvas'),ctx=c.getContext('2d');
+  var SIZE=Math.min(360,window.innerWidth*.88);
+  c.width=SIZE;c.height=SIZE;
+  c.style.width=SIZE+'px';c.style.height=SIZE+'px';
+
+  var COLS=4,ROWS=4,TW=Math.floor(SIZE/COLS),TH=Math.floor(SIZE/ROWS);
+  var tiles=[],selected=-1,moves=0,placed=0,secs=0,timer=null;
+
+  // Draw the full heart onto an offscreen canvas
+  var off=document.createElement('canvas');off.width=SIZE;off.height=SIZE;
+  var octx=off.getContext('2d');
+
+  function drawHeartFull(ctx2,W,H){
+    ctx2.clearRect(0,0,W,H);
+    var cx=W/2,cy=H/2,s=W*.38;
+    ctx2.save();ctx2.translate(cx,cy+s*.05);
+    ctx2.beginPath();
+    ctx2.moveTo(0,s*.25);
+    ctx2.bezierCurveTo(0,-s*.1,-s*.6,-s*.4,-s*.6,0);
+    ctx2.bezierCurveTo(-s*.6,s*.45,0,s*.7,0,s*.9);
+    ctx2.bezierCurveTo(0,s*.7,s*.6,s*.45,s*.6,0);
+    ctx2.bezierCurveTo(s*.6,-s*.4,0,-s*.1,0,s*.25);
+    var g=ctx2.createRadialGradient(-s*.1,-s*.05,0,0,s*.2,s*1.2);
+    g.addColorStop(0,'#f5b8c5');g.addColorStop(.45,'#d4607a');g.addColorStop(1,'#7a1a30');
+    ctx2.fillStyle=g;ctx2.fill();
+    // Sandra text
+    ctx2.font='italic 600 '+Math.round(s*.32)+'px Georgia,serif';
+    ctx2.textAlign='center';ctx2.textBaseline='middle';
+    var tg=ctx2.createLinearGradient(-s*.5,0,s*.5,0);
+    tg.addColorStop(0,'#f5e8d0');tg.addColorStop(.5,'#c0506a');tg.addColorStop(1,'#f5e8d0');
+    ctx2.fillStyle=tg;ctx2.shadowColor='rgba(0,0,0,.4)';ctx2.shadowBlur=6;
+    ctx2.fillText('Sandra',0,s*.05);
+    ctx2.restore();
+  }
+  drawHeartFull(octx,SIZE,SIZE);
+
+  function initPuzzle(){
+    moves=0;placed=0;secs=0;selected=-1;
+    document.getElementById('mv').textContent=0;
+    document.getElementById('pr').textContent=0;
+    document.getElementById('tm').textContent='0s';
+    document.getElementById('match-msg').textContent='';
+    clearInterval(timer);timer=null;
+    tiles=[];
+    var order=[];for(var i=0;i<COLS*ROWS;i++)order.push(i);
+    // shuffle
+    for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=order[i];order[i]=order[j];order[j]=tmp;}
+    order.forEach(function(correct,pos){
+      tiles.push({correct:correct,current:pos,placed:false});
+    });
+    render();
+  }
+
+  function render(){
+    ctx.clearRect(0,0,SIZE,SIZE);
+    tiles.forEach(function(tile,idx){
+      var col=tile.current%COLS,row=Math.floor(tile.current/COLS);
+      var x=col*TW,y=row*TH;
+      var sc=tile.correct%COLS,sr=Math.floor(tile.correct/ROWS);
+      ctx.save();
+      ctx.beginPath();ctx.rect(x+1,y+1,TW-2,TH-2);ctx.clip();
+      ctx.drawImage(off,sc*TW,sr*TH,TW,TH,x,y,TW,TH);
+      // tile border
+      if(tile.placed){
+        ctx.strokeStyle='rgba(192,80,106,.7)';ctx.lineWidth=2;
+      } else if(idx===selected){
+        ctx.strokeStyle='#c0506a';ctx.lineWidth=2.5;
+        ctx.fillStyle='rgba(192,80,106,.18)';ctx.fillRect(x+1,y+1,TW-2,TH-2);
+      } else {
+        ctx.strokeStyle='rgba(192,80,106,.18)';ctx.lineWidth=1;
+      }
+      ctx.strokeRect(x+1,y+1,TW-2,TH-2);
+      // tile number hint
+      if(!tile.placed&&idx!==selected){
+        ctx.font='bold 10px sans-serif';ctx.fillStyle='rgba(192,80,106,.4)';
+        ctx.fillText(tile.correct+1,x+5,y+14);
+      }
+      ctx.restore();
+    });
+  }
+
+  c.addEventListener('click',function(e){
+    var r=c.getBoundingClientRect();
+    var mx=(e.clientX-r.left)*(SIZE/r.width),my=(e.clientY-r.top)*(SIZE/r.height);
+    var col=Math.floor(mx/TW),row=Math.floor(my/TH);
+    var idx=row*COLS+col;
+    if(idx<0||idx>=tiles.length)return;
+    if(tiles[idx].placed)return;
+    if(selected===-1){
+      selected=idx;
+    } else if(selected===idx){
+      selected=-1;
+    } else {
+      // swap
+      if(!timer){timer=setInterval(function(){secs++;document.getElementById('tm').textContent=secs+'s';},1000);}
+      var tmp=tiles[selected].current;
+      tiles[selected].current=tiles[idx].current;
+      tiles[idx].current=tmp;
+      moves++;document.getElementById('mv').textContent=moves;
+      // check if either is now in place
+      [selected,idx].forEach(function(i){
+        if(tiles[i].correct===tiles[i].current&&!tiles[i].placed){
+          tiles[i].placed=true;placed++;
+          document.getElementById('pr').textContent=placed;
+        }
+      });
+      selected=-1;
+      if(placed===tiles.length){
+        clearInterval(timer);
+        document.getElementById('match-msg').textContent='✦ Heart restored! '+moves+' moves · '+secs+'s ✦';
+      }
+    }
+    render();
+  });
+
+  document.getElementById('match-new').addEventListener('click',initPuzzle);
+  initPuzzle();
+})();
+
+// ═══════════════════════════════════════════
+// POEM COMPOSER
+// ═══════════════════════════════════════════
+(function(){
+  var POEM_LINES=[
+    {label:'Line 1',words:['Sandra,','My love,','Dearest,','Sweet one,']},
+    {label:'Line 2',words:['you are the light','you are the star','you fill the dark','you are the warmth']},
+    {label:'Line 3',words:['that finds me','that guides me','that holds me','that wakes me']},
+    {label:'Line 4',words:['every single morning.','in the stillest night.','through every storm.','beyond the farthest star.']},
+    {label:'Line 5',words:['I carry your name','I hold your soul','I keep your laugh','I breathe your light']},
+    {label:'Line 6',words:['like a secret prayer,','like a hidden flame,','like a gentle tide,','like a golden thread,']},
+    {label:'Line 7',words:['and I always will —','and nothing ends it —','and time only grows it —','and so it remains —']},
+    {label:'Line 8',words:['forever, yours. ♥','endlessly, mine. ♥','always, ours. ♥','infinitely, true. ♥']}
+  ];
+
+  var chosen=[];
+  var poemCanvas=document.getElementById('poem-canvas');
+  var pctx=poemCanvas.getContext('2d');
+  var PW=Math.min(560,window.innerWidth*.9);
+  poemCanvas.width=PW;poemCanvas.height=200;
+  poemCanvas.style.width=PW+'px';poemCanvas.style.height='200px';
+
+  // ink strokes drawn as words are chosen
+  var inkStrokes=[];
+
+  function addInkStroke(){
+    var x=Math.random()*PW,y=Math.random()*200;
+    inkStrokes.push({x:x,y:y,progress:0,len:30+Math.random()*80,angle:Math.random()*Math.PI*2,alpha:0.18+Math.random()*.12});
+  }
+
+  (function inkLoop(){
+    pctx.clearRect(0,0,PW,200);
+    inkStrokes.forEach(function(s){
+      if(s.progress<1)s.progress+=.03;
+      var ex=s.x+Math.cos(s.angle)*s.len*s.progress;
+      var ey=s.y+Math.sin(s.angle)*s.len*s.progress;
+      pctx.beginPath();pctx.moveTo(s.x,s.y);pctx.lineTo(ex,ey);
+      pctx.strokeStyle='rgba(192,80,106,'+s.alpha+')';pctx.lineWidth=.8;pctx.stroke();
+    });
+    // floating poem words on canvas
+    if(chosen.length>0){
+      pctx.font='italic 15px "Cormorant Garamond",serif';
+      pctx.fillStyle='rgba(61,32,48,.18)';pctx.textAlign='center';
+      chosen.forEach(function(w,i){
+        pctx.fillText(w,PW/2+(i%2===0?-40:40),30+i*20);
+      });
+    }
+    requestAnimationFrame(inkLoop);
+  })();
+
+  function buildLines(){
+    var container=document.getElementById('poem-lines');
+    container.innerHTML='';chosen=[];
+    document.getElementById('poem-output').textContent='';
+    inkStrokes=[];
+    POEM_LINES.forEach(function(line,li){
+      var row=document.createElement('div');row.className='poem-row';
+      var lbl=document.createElement('span');lbl.className='poem-row-label';lbl.textContent=line.label;
+      row.appendChild(lbl);
+      line.words.forEach(function(word){
+        var btn=document.createElement('button');btn.className='pw';btn.textContent=word;
+        btn.addEventListener('click',function(){
+          // deselect others in this row
+          row.querySelectorAll('.pw').forEach(function(b){b.classList.remove('chosen');});
+          btn.classList.add('chosen');
+          chosen[li]=word;
+          addInkStroke();addInkStroke();addInkStroke();
+          // rebuild poem output
+          var lines=POEM_LINES.map(function(_,i){return chosen[i]||'…';});
+          document.getElementById('poem-output').textContent=lines.join('\n');
+        });
+        row.appendChild(btn);
+      });
+      container.appendChild(row);
+    });
+  }
+
+  document.getElementById('poem-reset').addEventListener('click',buildLines);
+  buildLines();
+})();
+
+// ═══════════════════════════════════════════
+// PHOTO BOOTH
+// ═══════════════════════════════════════════
+(function(){
+  var c=document.getElementById('booth-canvas'),ctx=c.getContext('2d');
+  var W=500,H=340;
+  var stickers=[],activeSticker='🌸',hasFrame=false;
+
+  function drawBase(){
+    ctx.clearRect(0,0,W,H);
+    // soft gradient background
+    var g=ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,'#fff5f7');g.addColorStop(.5,'#fde8ee');g.addColorStop(1,'#fff0f5');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    // faint grid texture
+    ctx.strokeStyle='rgba(192,80,106,.04)';ctx.lineWidth=1;
+    for(var x=0;x<W;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(var y=0;y<H;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    // Sandra watermark
+    ctx.save();ctx.globalAlpha=.06;
+    ctx.font='italic 300 80px "Cormorant Garamond",serif';ctx.fillStyle='#c0506a';
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Sandra',W/2,H/2);ctx.restore();
+    // frame
+    if(hasFrame){
+      ctx.strokeStyle='#c0506a';ctx.lineWidth=3;
+      ctx.strokeRect(8,8,W-16,H-16);
+      ctx.strokeStyle='rgba(192,80,106,.3)';ctx.lineWidth=1;
+      ctx.strokeRect(14,14,W-28,H-28);
+      // corner hearts
+      var corners=[[18,18],[W-18,18],[18,H-18],[W-18,H-18]];
+      corners.forEach(function(co){
+        ctx.save();ctx.translate(co[0],co[1]);ctx.font='14px serif';ctx.fillStyle='#c0506a';
+        ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('♥',0,0);ctx.restore();
+      });
+    }
+  }
+
+  function drawStickers(){
+    stickers.forEach(function(s){
+      ctx.save();ctx.font=s.size+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.translate(s.x,s.y);ctx.rotate(s.rot);ctx.globalAlpha=s.a;
+      ctx.fillText(s.emoji,0,0);ctx.restore();
+    });
+  }
+
+  function render(){drawBase();drawStickers();}
+  render();
+
+  c.addEventListener('click',function(e){
+    var r=c.getBoundingClientRect();
+    var mx=(e.clientX-r.left)*(W/r.width),my=(e.clientY-r.top)*(H/r.height);
+    stickers.push({
+      emoji:activeSticker,x:mx,y:my,
+      size:28+Math.random()*18,
+      rot:(Math.random()-.5)*.5,a:.85+Math.random()*.15
+    });
+    // animate pop
+    var pop=stickers[stickers.length-1];
+    var scale=0,target=1;
+    (function grow(){
+      if(scale<target){scale=Math.min(scale+.12,target);requestAnimationFrame(grow);}
+    })();
+    render();
+  });
+
+  document.getElementById('sticker-row').addEventListener('click',function(e){
+    var btn=e.target.closest('.sticker-btn');if(!btn)return;
+    activeSticker=btn.dataset.s;
+    document.querySelectorAll('.sticker-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+  });
+
+  document.getElementById('booth-frame').addEventListener('click',function(){
+    hasFrame=!hasFrame;this.textContent=hasFrame?'✕ Remove Frame':'♥ Add Love Frame';render();
+  });
+
+  document.getElementById('booth-clear').addEventListener('click',function(){
+    stickers=[];hasFrame=false;
+    document.getElementById('booth-frame').textContent='♥ Add Love Frame';render();
+  });
+
+  document.getElementById('booth-save').addEventListener('click',function(){
+    var a=document.createElement('a');a.download='sandra-booth.png';a.href=c.toDataURL();a.click();
+  });
+})();
+
+// ═══════════════════════════════════════════
+// DRAW HEART
+// ═══════════════════════════════════════════
+(function(){
+  var c=document.getElementById('draw-canvas'),ctx=c.getContext('2d');
+  var W=Math.min(520,window.innerWidth*.9),H=Math.round(W*.69);
+  c.width=W;c.height=H;c.style.width=W+'px';c.style.height=H+'px';
+
+  var drawing=false,lastX=0,lastY=0;
+  var color='#c0506a',brushSize=3;
+  var strokes=[];
+
+  function clearCanvas(){
+    ctx.clearRect(0,0,W,H);
+    // soft background
+    var g=ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,'#fff8f8');g.addColorStop(1,'#fff0f5');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    // guide hint
+    ctx.save();ctx.globalAlpha=.06;
+    ctx.font='italic 300 55px "Cormorant Garamond",serif';ctx.fillStyle='#c0506a';
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('draw here ♥',W/2,H/2);ctx.restore();
+  }
+  clearCanvas();
+
+  function getPos(e){
+    var r=c.getBoundingClientRect();
+    var src=e.touches?e.touches[0]:e;
+    return{x:(src.clientX-r.left)*(W/r.width),y:(src.clientY-r.top)*(H/r.height)};
+  }
+
+  c.addEventListener('mousedown',function(e){drawing=true;var p=getPos(e);lastX=p.x;lastY=p.y;document.getElementById('draw-msg').textContent='';});
+  c.addEventListener('touchstart',function(e){e.preventDefault();drawing=true;var p=getPos(e);lastX=p.x;lastY=p.y;},{passive:false});
+  window.addEventListener('mouseup',function(){drawing=false;});
+  window.addEventListener('touchend',function(){drawing=false;});
+
+  function drawLine(x1,y1,x2,y2,col,sz){
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);
+    ctx.strokeStyle=col;ctx.lineWidth=sz;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.shadowColor=col;ctx.shadowBlur=sz*.8;
+    ctx.stroke();ctx.shadowBlur=0;
+  }
+
+  c.addEventListener('mousemove',function(e){
+    if(!drawing)return;
+    var p=getPos(e);drawLine(lastX,lastY,p.x,p.y,color,brushSize);lastX=p.x;lastY=p.y;
+  });
+  c.addEventListener('touchmove',function(e){
+    e.preventDefault();if(!drawing)return;
+    var p=getPos(e);drawLine(lastX,lastY,p.x,p.y,color,brushSize);lastX=p.x;lastY=p.y;
+  },{passive:false});
+
+  // color pickers
+  document.querySelectorAll('.color-dot').forEach(function(el){
+    el.addEventListener('click',function(){
+      color=this.dataset.c;
+      document.querySelectorAll('.color-dot').forEach(function(d){d.classList.remove('active');});
+      this.classList.add('active');
+    });
+  });
+
+  // brush sizes
+  document.querySelectorAll('.bs').forEach(function(el){
+    el.addEventListener('click',function(){
+      brushSize=parseInt(this.dataset.sz);
+      document.querySelectorAll('.bs').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active');
+    });
+  });
+
+  document.getElementById('draw-clear').addEventListener('click',function(){
+    clearCanvas();document.getElementById('draw-msg').textContent='';
+  });
+
+  // Auto-draw an animated heart
+  document.getElementById('draw-heart-btn').addEventListener('click',function(){
+    clearCanvas();
+    document.getElementById('draw-msg').textContent='Drawing a heart for Sandra…';
+    var cx=W/2,cy=H/2,r=Math.min(W,H)*.3;
+    var pts=[];var steps=180;
+    for(var i=0;i<=steps;i++){
+      var t=(i/steps)*Math.PI*2;
+      // heart parametric: x=16sin³(t), y=13cos(t)-5cos(2t)-2cos(3t)-cos(4t)
+      var hx=cx+(16*Math.pow(Math.sin(t),3))*(r/16);
+      var hy=cy-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*(r/16);
+      pts.push({x:hx,y:hy});
+    }
+    var idx=0;
+    var iv=setInterval(function(){
+      if(idx>=pts.length-1){
+        clearInterval(iv);
+        // Sandra label
+        ctx.save();
+        ctx.font='italic 600 '+Math.round(r*.38)+'px "Cormorant Garamond",serif';
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        var tg=ctx.createLinearGradient(cx-r*.4,0,cx+r*.4,0);
+        tg.addColorStop(0,'#c0506a');tg.addColorStop(.5,'#c0506a');tg.addColorStop(1,'#c0506a');
+        ctx.fillStyle=tg;ctx.shadowColor='rgba(192,80,106,.3)';ctx.shadowBlur=8;
+        ctx.fillText('Sandra',cx,cy+r*.08);ctx.restore();
+        document.getElementById('draw-msg').textContent='♥ Made with love, just for Sandra';
+        return;
+      }
+      var col=['#c0506a','#e8728a','#c0506a','#c0506a'][Math.floor(idx/45)%4];
+      drawLine(pts[idx].x,pts[idx].y,pts[idx+1].x,pts[idx+1].y,col,3);
+      idx+=2;
+    },12);
+  });
+})();
+
+// ═══════════════════════════════════════════
+// LOVE CLOCK
+// ═══════════════════════════════════════════
+(function(){
+  var c=document.getElementById('clock-canvas'),ctx=c.getContext('2d');
+  var W=320,H=320,cx=W/2,cy=H/2,R=120;
+  var SINCE=new Date('2023-02-14T00:00:00');
+
+  function arc(val,max,color,r,lw,glow){
+    var a=-Math.PI/2,e=a+(val/max)*Math.PI*2;
+    ctx.beginPath();ctx.arc(cx,cy,r,a,e);
+    if(glow){ctx.shadowColor=color;ctx.shadowBlur=10;}
+    ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.lineCap='round';ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    var now=new Date(),diff=now-SINCE;
+    var ts=Math.floor(diff/1000),s=ts%60,m=Math.floor(ts/60)%60,h=Math.floor(ts/3600)%24,d=Math.floor(ts/86400);
+
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='rgba(192,80,106,.1)';ctx.lineWidth=1;ctx.stroke();
+
+    arc(s,60,'rgba(192,80,106,.8)',R,2,true);
+    arc(m,60,'rgba(192,80,106,.8)',R-18,2.5,true);
+    arc(h,24,'rgba(192,80,106,.3)',R-36,3,false);
+
+    for(var i=0;i<60;i++){
+      var a=(i/60)*Math.PI*2-Math.PI/2,big=i%5===0;
+      ctx.beginPath();
+      ctx.moveTo(cx+Math.cos(a)*(R+3),cy+Math.sin(a)*(R+3));
+      ctx.lineTo(cx+Math.cos(a)*(R+(big?13:7)),cy+Math.sin(a)*(R+(big?13:7)));
+      ctx.strokeStyle=big?'rgba(192,80,106,.5)':'rgba(192,80,106,.15)';
+      ctx.lineWidth=big?1:.5;ctx.stroke();
+    }
+
+    ctx.textAlign='center';
+    ctx.font='500 9px "Cinzel",serif';ctx.fillStyle='rgba(192,80,106,.5)';
+    ctx.fillText('DAYS WITH SANDRA',cx,cy-26);
+
+    ctx.font='italic 300 50px "Cormorant Garamond",serif';
+    ctx.fillStyle='#3d2030';ctx.shadowColor='rgba(192,80,106,.35)';ctx.shadowBlur=18;
+    ctx.fillText(d.toLocaleString(),cx,cy+14);ctx.shadowBlur=0;
+
+    ctx.font='400 9px "Cinzel",serif';ctx.fillStyle='rgba(192,80,106,.65)';
+    ctx.fillText(String(h).padStart(2,'0')+'h  '+String(m).padStart(2,'0')+'m  '+String(s).padStart(2,'0')+'s',cx,cy+38);
+
+    ctx.font='16px serif';ctx.fillStyle='rgba(192,80,106,.55)';
+    ctx.fillText('♥',cx,cy+60);
+
+    requestAnimationFrame(draw);
+  })();
+})();
+
+// ═══════════════════════════════════════════
+// ROSE PETALS
+// ═══════════════════════════════════════════
+(function(){
+  var c=document.getElementById('petal-canvas'),ctx=c.getContext('2d');
+  var maxW=Math.min(700,window.innerWidth*.92);
+  c.width=maxW;c.height=Math.round(maxW*.52);
+  c.style.width=c.width+'px';c.style.height=c.height+'px';
+  var W=c.width,H=c.height;
+  var petals=[],last={x:-1,y:-1};
+
+  c.addEventListener('mousemove',function(e){
+    var r=c.getBoundingClientRect();
+    var mx=(e.clientX-r.left)*(W/r.width),my=(e.clientY-r.top)*(H/r.height);
+    var speed=Math.hypot(mx-last.x,my-last.y);
+    var n=Math.min(Math.floor(speed*.25)+1,4);
+    for(var i=0;i<n;i++){
+      petals.push({
+        x:mx+(Math.random()-.5)*14,y:my+(Math.random()-.5)*14,
+        vx:(Math.random()-.5)*1.8,vy:-(1+Math.random()*2.2),
+        rot:Math.random()*Math.PI*2,rv:(Math.random()-.5)*.08,
+        sc:.35+Math.random()*.7,a:1,decay:.007+Math.random()*.007,
+        hue:335+Math.random()*28
+      });
+    }
+    last.x=mx;last.y=my;
+  });
+
+  function drawPetal(p){
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.scale(p.sc,p.sc);ctx.globalAlpha=p.a;
+    var g=ctx.createRadialGradient(-2,-4,0,0,0,13);
+    g.addColorStop(0,'hsla('+p.hue+',85%,82%,1)');
+    g.addColorStop(1,'hsla('+(p.hue+10)+',70%,52%,.5)');
+    ctx.fillStyle=g;
+    ctx.beginPath();ctx.moveTo(0,-13);ctx.bezierCurveTo(7,-8,11,2,0,13);ctx.bezierCurveTo(-11,2,-7,-8,0,-13);
+    ctx.fill();ctx.restore();
+  }
+
+  (function loop(){
+    ctx.clearRect(0,0,W,H);
+    petals=petals.filter(function(p){return p.a>0;});
+    petals.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;p.vy+=.045;p.rot+=p.rv;p.a-=p.decay;
+      if(p.a>0)drawPetal(p);
+    });
+    requestAnimationFrame(loop);
+  })();
+})();
+</script>
+</body>
+</html>

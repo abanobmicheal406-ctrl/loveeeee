@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Sandoura</title>
+    <style>
+        :root {
+            /* Calm Color Palette */
+            --sage: #94a684;
+            --cream: #fefae0;
+            --dusty-rose: #e29578;
+            --soft-blue: #a8dadc;
+            --text-dark: #4a4a4a;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            /* Calm animated gradient background */
+            background: linear-gradient(-45deg, #fefae0, #e9edc9, #faedcd, #d4a373);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Georgia', serif; /* More classic, calm font */
+            color: var(--text-dark);
+            overflow: hidden;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Card */
+        #quiz-container {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 40px;
+            text-align: center;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .step-tag {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.7rem;
+            color: var(--sage);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        h2 {
+            font-weight: 400;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-dark);
+            transition: 0.3s;
+        }
+
+        .option-btn:hover {
+            background: var(--sage);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        #final-reveal { display: none; }
+
+        .block-text {
+            font-family: monospace;
+            font-size: 7px;
+            color: var(--sage);
+            white-space: pre;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            display: inline-block;
+        }
+
+        /* Floating calm petals/bubbles */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 10s infinite ease-in;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="quiz-container">
+        <div id="quiz-flow">
+            <span class="step-tag" id="step-counter">Verification 1 / 5</span>
+            <h2 id="question-text">Loading...</h2>
+            <div class="options-grid" id="options-container"></div>
+        </div>
+
+        <div id="final-reveal">
+            <div class="block-text">
+ ██████╗  █████╗ ███╗   ██╗██████╗  ██████╗ ██╗   ██╗██████╗  █████╗ 
+██╔════╝ ██╔══██╗████╗  ██║██╔══██╗██╔═══██╗██║   ██║██╔══██╗██╔══██╗
+╚█████╗  ███████║██╔██╗ ██║██║  ██║██║   ██║██║   ██║██████╔╝███████║
+ ╚═══██╗ ██╔══██║██║╚██╗██║██║  ██║██║   ██║██║   ██║██╔══██╗██╔══██║
+██████╔╝ ██║  ██║██║ ╚████║██████╔╝╚██████╔╝╚██████╔╝██║  ██║██║  ██║
+╚═════╝  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+            </div>
+            <h2 style="color: var(--sage);">You passed.</h2>
+            <p>Every answer leads back to you, Sandoura.</p>
+            <button class="option-btn" style="width: 100%; background: var(--sage); color: white;" onclick="celebrate()">
+                Happy birthdayyyyy LOZAAAA
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "When WILL you stop annoying me?", options: ["Never", "Today", "Now", "Don't know"], correct: 0 },
+            { q: "What is my favorite nickname for you?", options: ["70k4a", "Sandoura", "puppy", "yourself not your names"], correct: 3 },
+            { q: "How much do i put you inside my eyes?", options: ["0%", "100%", "100000000000000000%", "لازم اكتبها عربي ديه اللي بيبصلك او يتكلم عنك هكسر عضم ديك امههههههه"], correct: 3 },
+            { q: "How much of my heart do you own?", options: ["25%", "50%", "All of it", "Smash it"], correct: 3 },
+            { q: "Ready for the last step?", options: ["Yes", "Maybe", "I'm nervous", "Let's go"], correct: 0 }
+        ];
+
+        let currentStep = 0;
+
+        function loadQuestion() {
+            const qData = questions[currentStep];
+            document.getElementById('step-counter').innerText = `Verification ${currentStep + 1} / ${questions.length}`;
+            document.getElementById('question-text').innerText = qData.q;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            qData.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (i === qData.correct || currentStep === 4) {
+                        nextStep();
+                    } else {
+                        btn.style.background = "#ffdce0";
+                        setTimeout(() => btn.style.background = "rgba(255, 255, 255, 0.6)", 500);
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function nextStep() {
+            currentStep++;
+            if (currentStep < questions.length) {
+                loadQuestion();
+            } else {
+                document.getElementById('quiz-flow').style.display = 'none';
+                document.getElementById('final-reveal').style.display = 'block';
+            }
+        }
+
+        function celebrate() {
+            alert("I'm lucky to found you, Sandoura! Happy Birthday .");
+        }
+
+        // Create calm background bubbles
+        for (let i = 0; i < 15; i++) {
+            let bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            let size = Math.random() * 60 + 20 + 'px';
+            bubble.style.width = size;
+            bubble.style.height = size;
+            bubble.style.left = Math.random() * 100 + 'vw';
+            bubble.style.animationDelay = Math.random() * 5 + 's';
+            document.body.appendChild(bubble);
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

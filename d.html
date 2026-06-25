@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cake Frame Studio · Art Deco</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #1a1408;
+  --panel:   #231c0e;
+  --gold:    #c9a84c;
+  --gold2:   #e8cc7a;
+  --cream:   #f5ead2;
+  --bronze:  #8b6914;
+  --muted:   rgba(245,234,210,.38);
+  --border:  rgba(201,168,76,.28);
+  --text:    #f5ead2;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow-x:hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  position: relative;
+}
+
+/* ── Art deco grain overlay ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(201,168,76,.018) 3px, rgba(201,168,76,.018) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(201,168,76,.018) 3px, rgba(201,168,76,.018) 4px);
+}
+
+/* ── Art deco corner ornaments ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  border: 1px solid rgba(201,168,76,.15);
+  margin: 14px;
+}
+
+/* ── Header ── */
+header {
+  position: relative; z-index: 10;
+  text-align: center;
+  padding: 2.2rem 2rem 1rem;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+}
+.deco-line {
+  display: flex; align-items: center; justify-content: center; gap: 1rem;
+  margin-bottom: .6rem;
+}
+.deco-line::before, .deco-line::after {
+  content: '';
+  flex: 1; max-width: 120px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+.deco-diamond {
+  width: 8px; height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+.header-chip {
+  font-family: 'Cinzel', serif;
+  font-size: .6rem; letter-spacing: .5em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: .5rem;
+}
+h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: .12em;
+  text-shadow: 0 0 30px rgba(201,168,76,.3);
+}
+.header-sub {
+  font-style: italic; font-size: .95rem;
+  color: var(--muted); margin-top: .4rem;
+}
+
+/* ── Main layout ── */
+.app {
+  position: relative; z-index: 10;
+  display: grid;
+  grid-template-columns: 280px 1fr 260px;
+  gap: 1.4rem;
+  width: 100%; max-width: 1200px;
+  padding: 1.4rem 1.5rem 3rem;
+}
+@media(max-width:900px) { .app { grid-template-columns: 1fr; } }
+
+/* ── Panels ── */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1.2rem 1.1rem;
+  display: flex; flex-direction: column; gap: 1.1rem;
+}
+.panel-title {
+  font-family: 'Cinzel', serif;
+  font-size: .65rem; letter-spacing: .4em; text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: .55rem;
+  display: flex; align-items: center; gap: .6rem;
+}
+.panel-title::before {
+  content: '◆'; font-size: .5rem; color: var(--gold);
+}
+
+.grp-label {
+  font-family: 'Cinzel', serif;
+  font-size: .58rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: .38rem;
+}
+
+/* ── Option buttons ── */
+.opt-row { display: flex; flex-wrap: wrap; gap: .35rem; }
+.opt-btn {
+  padding: .3rem .75rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .85rem;
+  cursor: pointer; border-radius: 1px;
+  transition: all .2s;
+}
+.opt-btn:hover { border-color: var(--gold); color: var(--gold); }
+.opt-btn.on {
+  background: linear-gradient(135deg, rgba(201,168,76,.18), rgba(139,105,20,.22));
+  border-color: var(--gold); color: var(--gold2);
+  box-shadow: 0 0 12px rgba(201,168,76,.15);
+}
+
+/* ── Color swatches ── */
+.swatch-row { display: flex; gap: .4rem; flex-wrap: wrap; }
+.swatch {
+  width: 24px; height: 24px;
+  border-radius: 1px; cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform .2s, border-color .2s;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+}
+.swatch:hover { transform: scale(1.15); }
+.swatch.on { border-color: var(--gold2); transform: scale(1.15); }
+
+/* ── Sliders ── */
+.slider-row { display: flex; align-items: center; gap: .6rem; }
+.slider-lbl { font-size: .72rem; color: var(--muted); min-width: 52px; font-family: 'Cinzel',serif; letter-spacing:.06em; }
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  height: 3px; border-radius: 4px;
+  background: linear-gradient(to right, var(--gold), var(--bronze));
+  outline: none; cursor: pointer; flex:1;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--gold2); border: 2px solid var(--bg);
+  box-shadow: 0 0 6px rgba(201,168,76,.5); cursor: pointer;
+}
+.slider-val { font-family:'Cinzel',serif; font-size:.72rem; color:var(--gold); min-width:34px; text-align:right; }
+
+/* ── Canvas wrapper ── */
+.canvas-wrap {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; gap: .8rem;
+}
+#main-canvas {
+  display: block;
+  border: 1px solid var(--border);
+  background: #140f04;
+  cursor: crosshair;
+  max-width: 100%;
+  box-shadow: 0 0 60px rgba(201,168,76,.08), inset 0 0 40px rgba(0,0,0,.4);
+}
+#main-canvas.dragging { cursor: grabbing; }
+#main-canvas.over-tier { cursor: grab; }
+
+/* ── Toolbar ── */
+.toolbar {
+  display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center;
+}
+.tbtn {
+  padding: .38rem 1rem;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); font-family: 'Cinzel', serif;
+  font-size: .58rem; letter-spacing: .25em;
+  cursor: pointer; border-radius: 1px; transition: all .22s;
+}
+.tbtn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,.06); }
+.tbtn.danger:hover { border-color: #c94a4a; color: #c94a4a; }
+.tbtn.accent { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,.08); }
+.tbtn.accent:hover { background: rgba(201,168,76,.18); }
+
+/* ── Tier list ── */
+#tier-list { display: flex; flex-direction: column; gap: .4rem; max-height: 320px; overflow-y: auto; }
+.tier-item {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .45rem .6rem;
+  background: rgba(201,168,76,.04);
+  border: 1px solid var(--border);
+  border-radius: 1px; cursor: pointer; transition: all .2s;
+  font-size: .8rem;
+}
+.tier-item:hover { border-color: var(--gold); background: rgba(201,168,76,.08); }
+.tier-item.selected { border-color: var(--gold2); background: rgba(201,168,76,.12); }
+.tier-dot { width: 12px; height: 12px; border-radius: 1px; flex-shrink: 0; }
+.tier-name { flex: 1; font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.08em; color:var(--cream); }
+.tier-del { color: rgba(201,168,76,.35); cursor: pointer; font-size: .85rem; padding: 0 .2rem; transition: color .2s; }
+.tier-del:hover { color: #c94a4a; }
+
+/* ── Instructions ── */
+.instruction-box {
+  background: rgba(201,168,76,.06);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--gold);
+  padding: .7rem .9rem;
+  font-size: .78rem; color: var(--muted); line-height: 1.7;
+}
+.instruction-box strong { color: var(--gold); font-family:'Cinzel',serif; font-size:.65rem; letter-spacing:.1em; }
+
+/* ── Status bar ── */
+#status-bar {
+  font-family: 'Cinzel', serif;
+  font-size: .6rem; letter-spacing: .2em;
+  color: var(--gold); text-align: center;
+  min-height: 1.2rem; opacity: .8;
+}
+
+/* ── Photo zone ── */
+.photo-zone {
+  border: 1px dashed rgba(201,168,76,.3);
+  border-radius: 2px; padding: .9rem;
+  text-align: center; cursor: pointer;
+  transition: all .25s; position: relative;
+  background: rgba(201,168,76,.03);
+}
+.photo-zone:hover { border-color: var(--gold); background: rgba(201,168,76,.07); }
+.photo-zone.loaded { border-style: solid; border-color: rgba(201,168,76,.5); }
+.photo-zone input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
+.photo-zone-lbl { font-size:.78rem; color:var(--muted); line-height:1.6; pointer-events:none; }
+.photo-zone-lbl span { font-size:1.4rem; display:block; margin-bottom:.25rem; color:var(--gold); }
+#ph-preview { width:100%; max-height:75px; object-fit:cover; border-radius:1px; margin-top:.5rem; display:none; }
+#ph-clear { display:none; margin-top:.4rem; padding:.25rem .8rem; background:transparent; border:1px solid rgba(201,168,76,.3); color:var(--gold); font-family:'Cinzel',serif; font-size:.55rem; cursor:pointer; transition:all .2s; letter-spacing:.15em; }
+#ph-clear:hover { border-color:#c94a4a; color:#c94a4a; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--bronze); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="header-chip">✦ Atelier Pâtissier ✦</p>
+  <div class="deco-line"><div class="deco-diamond"></div></div>
+  <h1>Cake Frame Studio</h1>
+  <p class="header-sub"><em>Drag · Build · Design · For Sandra</em></p>
+</header>
+
+<div class="app">
+
+  <!-- ══ LEFT: TIER TOOLS ══ -->
+  <div style="display:flex;flex-direction:column;gap:1rem">
+
+    <div class="panel">
+      <div class="panel-title">Add Tier</div>
+
+      <div>
+        <div class="grp-label">Flavour</div>
+        <div class="opt-row" id="flav-row">
+          <button class="opt-btn on" data-g="flav" data-v="vanilla">Vanilla</button>
+          <button class="opt-btn" data-g="flav" data-v="choc">Choco</button>
+          <button class="opt-btn" data-g="flav" data-v="velvet">Velvet</button>
+          <button class="opt-btn" data-g="flav" data-v="lemon">Lemon</button>
+          <button class="opt-btn" data-g="flav" data-v="matcha">Matcha</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="grp-label">Frosting</div>
+        <div class="swatch-row" id="frost-swatches">
+          <div class="swatch on" data-c="#d4a0b0" title="Rose" style="background:#d4a0b0"></div>
+          <div class="swatch" data-c="#c9a84c" title="Gold" style="background:#c9a84c"></div>
+          <div class="swatch" data-c="#a0c4b8" title="Sage" style="background:#a0c4b8"></div>
+          <div class="swatch" data-c="#b8a8d0" title="Lavender" style="background:#b8a8d0"></div>
+          <div class="swatch" data-c="#d4c4a0" title="Cream" style="background:#d4c4a0"></div>
+          <div class="swatch" data-c="#5c3317" title="Choco" style="background:#5c3317"></div>
+          <div class="swatch" data-c="#c0b090" title="Ivory" style="background:#c0b090"></div>
+          <div class="swatch" data-c="#8b3a3a" title="Berry" style="background:#8b3a3a"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="grp-label">Tier Width</div>
+        <div class="slider-row">
+          <span class="slider-lbl">Width</span>
+          <input type="range" id="new-width" min="60" max="320" value="200">
+          <span class="slider-val" id="new-width-val">200</span>
+        </div>
+        <div class="slider-row" style="margin-top:.4rem">
+          <span class="slider-lbl">Height</span>
+          <input type="range" id="new-height" min="30" max="140" value="80">
+          <span class="slider-val" id="new-height-val">80</span>
+        </div>
+      </div>
+
+      <div class="instruction-box">
+        <strong>How to build</strong><br>
+        Configure above, then <strong>click &amp; drag</strong> on the canvas to place a tier anywhere. Drag existing tiers to reposition. Click a tier to select &amp; edit it.
+      </div>
+
+      <button class="tbtn accent" id="add-mode-btn" style="width:100%;padding:.55rem">◆ Drag to Place Tier</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Tiers</div>
+      <div id="tier-list"><p style="font-size:.75rem;color:var(--muted);text-align:center;padding:.5rem">No tiers yet.<br>Start dragging!</p></div>
+      <div class="toolbar">
+        <button class="tbtn danger" id="clear-all">Clear All</button>
+        <button class="tbtn" id="stack-btn">Auto Stack</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ CENTRE: CANVAS ══ -->
+  <div class="canvas-wrap">
+    <canvas id="main-canvas" width="520" height="620"></canvas>
+    <p id="status-bar">◆ Click "Drag to Place Tier" then drag on canvas ◆</p>
+    <div class="toolbar">
+      <button class="tbtn accent" id="save-btn">↓ Save PNG</button>
+      <button class="tbtn" id="undo-btn">↩ Undo</button>
+      <button class="tbtn" id="auto-cake-btn">✦ Auto Cake</button>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT: STYLE + PHOTO ══ -->
+  <div style="display:flex;flex-direction:column;gap:1rem">
+
+    <div class="panel">
+      <div class="panel-title">Selected Tier</div>
+      <p id="sel-hint" style="font-size:.78rem;color:var(--muted);font-style:italic">Click a tier on canvas to edit it.</p>
+      <div id="sel-controls" style="display:none;flex-direction:column;gap:.9rem">
+        <div>
+          <div class="grp-label">Frosting Color</div>
+          <div class="swatch-row" id="sel-frost-swatches">
+            <div class="swatch" data-sc="#d4a0b0" style="background:#d4a0b0"></div>
+            <div class="swatch" data-sc="#c9a84c" style="background:#c9a84c"></div>
+            <div class="swatch" data-sc="#a0c4b8" style="background:#a0c4b8"></div>
+            <div class="swatch" data-sc="#b8a8d0" style="background:#b8a8d0"></div>
+            <div class="swatch" data-sc="#d4c4a0" style="background:#d4c4a0"></div>
+            <div class="swatch" data-sc="#5c3317" style="background:#5c3317"></div>
+            <div class="swatch" data-sc="#c0b090" style="background:#c0b090"></div>
+            <div class="swatch" data-sc="#8b3a3a" style="background:#8b3a3a"></div>
+          </div>
+        </div>
+        <div>
+          <div class="grp-label">Flavour</div>
+          <div class="opt-row" id="sel-flav-row">
+            <button class="opt-btn" data-sf="vanilla">Vanilla</button>
+            <button class="opt-btn" data-sf="choc">Choco</button>
+            <button class="opt-btn" data-sf="velvet">Velvet</button>
+            <button class="opt-btn" data-sf="lemon">Lemon</button>
+            <button class="opt-btn" data-sf="matcha">Matcha</button>
+          </div>
+        </div>
+        <div>
+          <div class="grp-label">Width</div>
+          <div class="slider-row">
+            <input type="range" id="sel-width" min="60" max="320" value="200">
+            <span class="slider-val" id="sel-width-val">200</span>
+          </div>
+        </div>
+        <div>
+          <div class="grp-label">Height</div>
+          <div class="slider-row">
+            <input type="range" id="sel-height" min="30" max="140" value="80">
+            <span class="slider-val" id="sel-height-val">80</span>
+          </div>
+        </div>
+        <div>
+          <div class="grp-label">Drip Style</div>
+          <div class="opt-row" id="sel-drip-row">
+            <button class="opt-btn on" data-sd="round">Round</button>
+            <button class="opt-btn" data-sd="long">Long</button>
+            <button class="opt-btn" data-sd="none">None</button>
+          </div>
+        </div>
+        <div>
+          <div class="grp-label">Sprinkles</div>
+          <div class="opt-row" id="sel-sprinkle-row">
+            <button class="opt-btn on" data-ss="on">On</button>
+            <button class="opt-btn" data-ss="off">Off</button>
+          </div>
+        </div>
+        <div>
+          <div class="grp-label">Candles</div>
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <button class="tbtn" id="sel-cd-minus" style="padding:.2rem .55rem;font-size:.9rem">−</button>
+            <span id="sel-cd-count" style="font-family:'Cinzel',serif;color:var(--gold);font-size:.9rem;min-width:1.2rem;text-align:center">0</span>
+            <button class="tbtn" id="sel-cd-plus" style="padding:.2rem .55rem;font-size:.9rem">+</button>
+          </div>
+        </div>
+        <button class="tbtn danger" id="del-tier-btn" style="width:100%">✕ Delete This Tier</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Canvas Settings</div>
+      <div>
+        <div class="grp-label">Message</div>
+        <input type="text" id="cake-msg" value="Sandra ♥" maxlength="22" style="width:100%;background:rgba(201,168,76,.05);border:1px solid var(--border);color:var(--cream);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.95rem;padding:.45rem .7rem;outline:none;border-radius:1px;transition:border-color .2s">
+      </div>
+      <div>
+        <div class="grp-label">Background</div>
+        <div class="opt-row" id="bg-row">
+          <button class="opt-btn on" data-g="bg" data-v="dark">◆ Dark</button>
+          <button class="opt-btn" data-g="bg" data-v="cream">◇ Cream</button>
+          <button class="opt-btn" data-g="bg" data-v="marble">◈ Marble</button>
+        </div>
+      </div>
+      <div>
+        <div class="grp-label">Plate Style</div>
+        <div class="opt-row" id="plate-row">
+          <button class="opt-btn on" data-g="plate" data-v="gold">Gold</button>
+          <button class="opt-btn" data-g="plate" data-v="silver">Silver</button>
+          <button class="opt-btn" data-g="plate" data-v="none">None</button>
+        </div>
+      </div>
+      <div>
+        <div class="grp-label">Glow</div>
+        <div class="opt-row" id="glow-row">
+          <button class="opt-btn on" data-g="glow" data-v="on">On</button>
+          <button class="opt-btn" data-g="glow" data-v="off">Off</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Photo</div>
+      <div class="photo-zone" id="ph-zone">
+        <input type="file" id="ph-input" accept="image/*">
+        <div class="photo-zone-lbl"><span>◆</span>Add photo to cake<br><small style="opacity:.6">Click or drop here</small></div>
+        <img id="ph-preview" alt="">
+        <button id="ph-clear">✕ Remove</button>
+      </div>
+      <div id="ph-controls" style="display:none;flex-direction:column;gap:.7rem">
+        <div>
+          <div class="grp-label">Shape</div>
+          <div class="opt-row">
+            <button class="opt-btn on" data-ps="circle">Circle</button>
+            <button class="opt-btn" data-ps="heart">Heart</button>
+            <button class="opt-btn" data-ps="square">Square</button>
+          </div>
+        </div>
+        <div>
+          <div class="grp-label">Size</div>
+          <div class="slider-row">
+            <input type="range" id="ph-size" min="30" max="150" value="70">
+            <span class="slider-val" id="ph-size-val">70</span>
+          </div>
+        </div>
+        <div>
+          <div class="grp-label">Opacity</div>
+          <div class="slider-row">
+            <input type="range" id="ph-opacity" min="10" max="100" value="100">
+            <span class="slider-val" id="ph-opacity-val">100%</span>
+          </div>
+        </div>
+        <p style="font-size:.7rem;color:var(--muted);font-style:italic">Drag photo on canvas to reposition.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+/* ═══════════════════════════════
+   CANVAS & STATE
+═══════════════════════════════ */
+var canvas = document.getElementById('main-canvas');
+var ctx    = canvas.getContext('2d');
+var W = 520, H = 620;
+
+var FLAVS = {
+  vanilla: {a:'#fffde7',b:'#fff8c5'},
+  choc:    {a:'#3e2208',b:'#5c3317'},
+  velvet:  {a:'#8b1a1a',b:'#c62828'},
+  lemon:   {a:'#fffde7',b:'#fff176'},
+  matcha:  {a:'#d4edd8',b:'#a5c8a8'}
+};
+
+var globalState = {
+  bg: 'dark', plate: 'gold', glow: 'on',
+  msg: 'Sandra ♥', photo: null,
+  photoX: null, photoY: null,
+  photoShape: 'circle', photoSize: 70, photoOpacity: 1
+};
+
+// TIERS: each {x, y, w, h, flav, frost, drip, sprinkles, candles, id}
+var tiers   = [];
+var selected = -1; // index
+var history  = [];
+var flameT   = 0;
+var nextId   = 0;
+
+// current new-tier settings
+var newTierCfg = { flav:'vanilla', frost:'#d4a0b0', w:200, h:80 };
+
+// interaction state
+var addMode = false;
+var placing = false; // dragging to place new tier
+var placeStart = null;
+var draggingTier = -1;
+var dragOffX = 0, dragOffY = 0;
+var draggingPhoto = false;
+var dragPhotoOx = 0, dragPhotoOy = 0;
+
+/* ═══════════ OPT BUTTONS ═══════════ */
+document.querySelectorAll('.opt-btn[data-g]').forEach(function(b){
+  b.addEventListener('click', function(){
+    var g = this.dataset.g, v = this.dataset.v;
+    document.querySelectorAll('[data-g="'+g+'"]').forEach(function(x){x.classList.remove('on');});
+    this.classList.add('on');
+    if(g==='flav')  newTierCfg.flav = v;
+    if(g==='bg')    globalState.bg  = v;
+    if(g==='plate') globalState.plate = v;
+    if(g==='glow')  globalState.glow  = v;
+    render();
+  });
+});
+
+/* frost swatches for new tier */
+document.querySelectorAll('#frost-swatches .swatch').forEach(function(sw){
+  sw.addEventListener('click', function(){
+    document.querySelectorAll('#frost-swatches .swatch').forEach(function(s){s.classList.remove('on');});
+    this.classList.add('on');
+    newTierCfg.frost = this.dataset.c;
+  });
+});
+
+/* width/height sliders for new tier */
+document.getElementById('new-width').addEventListener('input', function(){
+  newTierCfg.w = parseInt(this.value);
+  document.getElementById('new-width-val').textContent = this.value;
+});
+document.getElementById('new-height').addEventListener('input', function(){
+  newTierCfg.h = parseInt(this.value);
+  document.getElementById('new-height-val').textContent = this.value;
+});
+
+/* message */
+document.getElementById('cake-msg').addEventListener('input', function(){
+  globalState.msg = this.value; render();
+});
+
+/* ═══════════ ADD MODE ═══════════ */
+document.getElementById('add-mode-btn').addEventListener('click', function(){
+  addMode = !addMode;
+  this.textContent = addMode ? '◆ PLACING — drag on canvas' : '◆ Drag to Place Tier';
+  this.style.background = addMode ? 'rgba(201,168,76,.2)' : '';
+  canvas.style.cursor = addMode ? 'crosshair' : 'default';
+  setStatus(addMode ? 'Click & drag on canvas to place new tier' : '');
+});
+
+/* ═══════════ CANVAS MOUSE ═══════════ */
+function getCanvasPos(e){
+  var r = canvas.getBoundingClientRect();
+  var src = e.touches ? e.touches[0] : e;
+  return {
+    x: (src.clientX - r.left) * (W / r.width),
+    y: (src.clientY - r.top)  * (H / r.height)
+  };
+}
+
+function tierAt(mx, my){
+  // check in reverse (top-drawn = last)
+  for(var i = tiers.length-1; i>=0; i--){
+    var t = tiers[i];
+    if(mx >= t.x && mx <= t.x+t.w && my >= t.y && my <= t.y+t.h) return i;
+  }
+  return -1;
+}
+
+function photoAt(mx, my){
+  if(!globalState.photo) return false;
+  var px = globalState.photoX !== null ? globalState.photoX : W/2;
+  var py = globalState.photoY !== null ? globalState.photoY : H/2;
+  var r  = globalState.photoSize/2 + 8;
+  return Math.abs(mx-px)<r && Math.abs(my-py)<r;
+}
+
+canvas.addEventListener('mousedown', function(e){
+  var p = getCanvasPos(e);
+  if(addMode){
+    placing = true;
+    placeStart = {x: p.x, y: p.y};
+    saveHistory();
+    return;
+  }
+  // photo drag?
+  if(photoAt(p.x, p.y)){
+    draggingPhoto = true;
+    var px = globalState.photoX !== null ? globalState.photoX : W/2;
+    var py = globalState.photoY !== null ? globalState.photoY : H/2;
+    dragPhotoOx = p.x - px; dragPhotoOy = p.y - py;
+    return;
+  }
+  // tier drag?
+  var idx = tierAt(p.x, p.y);
+  if(idx !== -1){
+    selectTier(idx);
+    draggingTier = idx;
+    dragOffX = p.x - tiers[idx].x;
+    dragOffY = p.y - tiers[idx].y;
+    canvas.classList.add('dragging');
+  } else {
+    selectTier(-1);
+  }
+});
+
+canvas.addEventListener('mousemove', function(e){
+  var p = getCanvasPos(e);
+  if(placing && placeStart){
+    // preview ghost
+    render();
+    var x = Math.min(p.x, placeStart.x);
+    var y = Math.min(p.y, placeStart.y);
+    var w = Math.abs(p.x - placeStart.x);
+    var h = Math.abs(p.y - placeStart.y);
+    drawTierGhost(x, y, w, h);
+    return;
+  }
+  if(draggingPhoto){
+    globalState.photoX = p.x - dragPhotoOx;
+    globalState.photoY = p.y - dragPhotoOy;
+    render(); return;
+  }
+  if(draggingTier !== -1){
+    tiers[draggingTier].x = p.x - dragOffX;
+    tiers[draggingTier].y = p.y - dragOffY;
+    render(); return;
+  }
+  // hover feedback
+  var idx = tierAt(p.x, p.y);
+  canvas.className = addMode ? '' : (idx !== -1 || photoAt(p.x,p.y) ? 'over-tier' : '');
+});
+
+canvas.addEventListener('mouseup', function(e){
+  var p = getCanvasPos(e);
+  if(placing && placeStart){
+    var x = Math.min(p.x, placeStart.x);
+    var y = Math.min(p.y, placeStart.y);
+    var w = Math.abs(p.x - placeStart.x);
+    var h = Math.abs(p.y - placeStart.y);
+    if(w > 20 && h > 15){
+      tiers.push({
+        id: nextId++, x:x, y:y, w:w, h:h,
+        flav: newTierCfg.flav, frost: newTierCfg.frost,
+        drip:'round', sprinkles:true, candles:0
+      });
+      updateTierList();
+    }
+    placing = false; placeStart = null;
+    render();
+    return;
+  }
+  if(draggingTier !== -1){
+    draggingTier = -1;
+    canvas.classList.remove('dragging');
+    render();
+  }
+  draggingPhoto = false;
+});
+
+// touch support
+canvas.addEventListener('touchstart', function(e){ e.preventDefault(); canvas.dispatchEvent(new MouseEvent('mousedown', {clientX:e.touches[0].clientX, clientY:e.touches[0].clientY})); },{passive:false});
+canvas.addEventListener('touchmove',  function(e){ e.preventDefault(); canvas.dispatchEvent(new MouseEvent('mousemove',  {clientX:e.touches[0].clientX, clientY:e.touches[0].clientY})); },{passive:false});
+canvas.addEventListener('touchend',   function(e){ e.preventDefault(); canvas.dispatchEvent(new MouseEvent('mouseup',   {clientX:(e.changedTouches[0]||{clientX:0}).clientX, clientY:(e.changedTouches[0]||{clientY:0}).clientY})); },{passive:false});
+
+/* ═══════════ SELECT TIER ═══════════ */
+function selectTier(idx){
+  selected = idx;
+  var sc = document.getElementById('sel-controls');
+  var sh = document.getElementById('sel-hint');
+  if(idx === -1){
+    sc.style.display = 'none'; sh.style.display = 'block';
+    document.querySelectorAll('.tier-item').forEach(function(el){el.classList.remove('selected');});
+    return;
+  }
+  var t = tiers[idx];
+  sc.style.display = 'flex'; sh.style.display = 'none';
+  document.getElementById('sel-width').value  = Math.round(t.w);
+  document.getElementById('sel-width-val').textContent = Math.round(t.w);
+  document.getElementById('sel-height').value = Math.round(t.h);
+  document.getElementById('sel-height-val').textContent = Math.round(t.h);
+  document.getElementById('sel-cd-count').textContent = t.candles||0;
+
+  // frost swatches
+  document.querySelectorAll('#sel-frost-swatches .swatch').forEach(function(s){
+    s.classList.toggle('on', s.dataset.sc === t.frost);
+  });
+  // flav buttons
+  document.querySelectorAll('#sel-flav-row .opt-btn').forEach(function(b){
+    b.classList.toggle('on', b.dataset.sf === t.flav);
+  });
+  // drip
+  document.querySelectorAll('#sel-drip-row .opt-btn').forEach(function(b){
+    b.classList.toggle('on', b.dataset.sd === (t.drip||'round'));
+  });
+  // sprinkles
+  document.querySelectorAll('#sel-sprinkle-row .opt-btn').forEach(function(b){
+    b.classList.toggle('on', b.dataset.ss === (t.sprinkles?'on':'off'));
+  });
+  // tier list highlight
+  document.querySelectorAll('.tier-item').forEach(function(el, i){
+    el.classList.toggle('selected', i === idx);
+  });
+  render();
+}
+
+/* ═══════════ SELECTED TIER CONTROLS ═══════════ */
+document.querySelectorAll('#sel-frost-swatches .swatch').forEach(function(sw){
+  sw.addEventListener('click', function(){
+    if(selected === -1) return;
+    document.querySelectorAll('#sel-frost-swatches .swatch').forEach(function(s){s.classList.remove('on');});
+    this.classList.add('on');
+    tiers[selected].frost = this.dataset.sc; render();
+  });
+});
+document.querySelectorAll('#sel-flav-row .opt-btn').forEach(function(b){
+  b.addEventListener('click', function(){
+    if(selected === -1) return;
+    document.querySelectorAll('#sel-flav-row .opt-btn').forEach(function(x){x.classList.remove('on');});
+    this.classList.add('on');
+    tiers[selected].flav = this.dataset.sf; render();
+  });
+});
+document.getElementById('sel-width').addEventListener('input', function(){
+  if(selected === -1) return;
+  var v = parseInt(this.value);
+  document.getElementById('sel-width-val').textContent = v;
+  var t = tiers[selected]; t.x = t.x + (t.w-v)/2; t.w = v; render();
+});
+document.getElementById('sel-height').addEventListener('input', function(){
+  if(selected === -1) return;
+  var v = parseInt(this.value);
+  document.getElementById('sel-height-val').textContent = v;
+  tiers[selected].h = v; render();
+});
+document.querySelectorAll('#sel-drip-row .opt-btn').forEach(function(b){
+  b.addEventListener('click', function(){
+    if(selected === -1) return;
+    document.querySelectorAll('#sel-drip-row .opt-btn').forEach(function(x){x.classList.remove('on');});
+    this.classList.add('on'); tiers[selected].drip = this.dataset.sd; render();
+  });
+});
+document.querySelectorAll('#sel-sprinkle-row .opt-btn').forEach(function(b){
+  b.addEventListener('click', function(){
+    if(selected === -1) return;
+    document.querySelectorAll('#sel-sprinkle-row .opt-btn').forEach(function(x){x.classList.remove('on');});
+    this.classList.add('on'); tiers[selected].sprinkles = this.dataset.ss==='on'; render();
+  });
+});
+document.getElementById('sel-cd-minus').addEventListener('click', function(){
+  if(selected===-1)return; if(tiers[selected].candles>0)tiers[selected].candles--; document.getElementById('sel-cd-count').textContent=tiers[selected].candles; render();
+});
+document.getElementById('sel-cd-plus').addEventListener('click', function(){
+  if(selected===-1)return; if(tiers[selected].candles<9)tiers[selected].candles++; document.getElementById('sel-cd-count').textContent=tiers[selected].candles; render();
+});
+document.getElementById('del-tier-btn').addEventListener('click', function(){
+  if(selected===-1)return; saveHistory(); tiers.splice(selected,1); selected=-1; updateTierList(); selectTier(-1); render();
+});
+
+/* ═══════════ TIER LIST ═══════════ */
+function updateTierList(){
+  var list = document.getElementById('tier-list');
+  if(tiers.length===0){
+    list.innerHTML='<p style="font-size:.75rem;color:var(--muted);text-align:center;padding:.5rem">No tiers yet.<br>Start dragging!</p>';
+    return;
+  }
+  list.innerHTML='';
+  tiers.forEach(function(t,i){
+    var item = document.createElement('div'); item.className='tier-item'+(i===selected?' selected':'');
+    var dot  = document.createElement('div'); dot.className='tier-dot'; dot.style.background=t.frost;
+    var name = document.createElement('span'); name.className='tier-name'; name.textContent='Tier '+(i+1)+' · '+t.flav;
+    var del  = document.createElement('span'); del.className='tier-del'; del.textContent='✕';
+    del.addEventListener('click', function(e){ e.stopPropagation(); saveHistory(); tiers.splice(i,1); if(selected===i)selectTier(-1); else if(selected>i)selected--; updateTierList(); render(); });
+    item.appendChild(dot); item.appendChild(name); item.appendChild(del);
+    item.addEventListener('click', function(){ selectTier(i); });
+    list.appendChild(item);
+  });
+}
+
+/* ═══════════ TOOLBAR BUTTONS ═══════════ */
+document.getElementById('clear-all').addEventListener('click', function(){
+  saveHistory(); tiers=[]; selected=-1; selectTier(-1); updateTierList(); render();
+});
+document.getElementById('undo-btn').addEventListener('click', function(){
+  if(history.length===0)return;
+  tiers=JSON.parse(history.pop()); selected=-1; selectTier(-1); updateTierList(); render();
+});
+document.getElementById('save-btn').addEventListener('click', function(){
+  var a=document.createElement('a'); a.download='Sandra-Cake-Frame.png'; a.href=canvas.toDataURL(); a.click();
+});
+document.getElementById('auto-cake-btn').addEventListener('click', function(){
+  saveHistory();
+  tiers=[];
+  var cx=W/2, frosts=['#d4a0b0','#c9a84c','#a0c4b8'];
+  var configs=[{w:310,h:120},{w:220,h:90},{w:130,h:65}];
+  var flavs=['vanilla','velvet','matcha'];
+  var curY=H-80;
+  configs.forEach(function(c,i){
+    tiers.push({id:nextId++,x:cx-c.w/2,y:curY-c.h,w:c.w,h:c.h,flav:flavs[i],frost:frosts[i],drip:'round',sprinkles:true,candles:i===2?3:0});
+    curY-=c.h+4;
+  });
+  selected=-1; selectTier(-1); updateTierList(); render();
+  setStatus('✦ Auto cake placed — click any tier to edit');
+});
+document.getElementById('stack-btn').addEventListener('click', function(){
+  if(tiers.length<2)return;
+  saveHistory();
+  // sort by width desc, then stack centered
+  tiers.sort(function(a,b){return b.w-a.w;});
+  var cx=W/2, curY=H-70;
+  tiers.forEach(function(t){
+    t.x=cx-t.w/2; t.y=curY-t.h; curY-=t.h+4;
+  });
+  updateTierList(); render();
+  setStatus('✦ Tiers stacked by size');
+});
+
+/* ═══════════ PHOTO ═══════════ */
+document.getElementById('ph-input').addEventListener('change', function(e){
+  var file=e.target.files[0]; if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var img=new Image();
+    img.onload=function(){
+      globalState.photo=img;
+      globalState.photoX=W/2; globalState.photoY=H/2;
+      document.getElementById('ph-preview').src=ev.target.result;
+      document.getElementById('ph-preview').style.display='block';
+      document.getElementById('ph-clear').style.display='inline-block';
+      document.getElementById('ph-zone').classList.add('loaded');
+      document.getElementById('ph-controls').style.display='flex';
+      render();
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('ph-clear').addEventListener('click',function(e){
+  e.stopPropagation();
+  globalState.photo=null;globalState.photoX=null;globalState.photoY=null;
+  document.getElementById('ph-preview').style.display='none';
+  document.getElementById('ph-clear').style.display='none';
+  document.getElementById('ph-zone').classList.remove('loaded');
+  document.getElementById('ph-controls').style.display='none';
+  document.getElementById('ph-input').value='';
+  render();
+});
+document.querySelectorAll('[data-ps]').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('[data-ps]').forEach(function(x){x.classList.remove('on');});
+    this.classList.add('on'); globalState.photoShape=this.dataset.ps; render();
+  });
+});
+document.getElementById('ph-size').addEventListener('input',function(){
+  globalState.photoSize=parseInt(this.value);
+  document.getElementById('ph-size-val').textContent=this.value; render();
+});
+document.getElementById('ph-opacity').addEventListener('input',function(){
+  globalState.photoOpacity=parseInt(this.value)/100;
+  document.getElementById('ph-opacity-val').textContent=this.value+'%'; render();
+});
+
+/* ═══════════ HISTORY ═══════════ */
+function saveHistory(){ history.push(JSON.stringify(tiers.map(function(t){return Object.assign({},t);}))); if(history.length>20)history.shift(); }
+
+/* ═══════════ STATUS ═══════════ */
+function setStatus(msg){ document.getElementById('status-bar').textContent = msg || '◆ Drag tiers to reposition · Click to select & edit ◆'; }
+
+/* ═══════════ DRAW GHOST ═══════════ */
+function drawTierGhost(x,y,w,h){
+  ctx.save();
+  ctx.strokeStyle='rgba(201,168,76,.7)'; ctx.lineWidth=1.5;
+  ctx.setLineDash([6,4]);
+  ctx.strokeRect(x,y,w,h);
+  ctx.fillStyle='rgba(201,168,76,.08)'; ctx.fillRect(x,y,w,h);
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+/* ═══════════ DRAW TIER ═══════════ */
+function drawTier(t, isSelected){
+  var fl = FLAVS[t.flav]||FLAVS.vanilla;
+  var fr = t.frost||'#d4a0b0';
+  var x=t.x, y=t.y, w=t.w, h=t.h, r=Math.min(10,w*.06,h*.15);
+
+  // shadow
+  ctx.save(); ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=18; ctx.shadowOffsetY=6;
+
+  // body
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r); ctx.closePath();
+
+  var cg=ctx.createLinearGradient(x,y,x+w,y+h);
+  cg.addColorStop(0,fl.a); cg.addColorStop(1,fl.b);
+  ctx.fillStyle=cg; ctx.fill();
+  ctx.shadowBlur=0; ctx.restore();
+
+  // subtle side shade
+  ctx.save();
+  var sg=ctx.createLinearGradient(x,0,x+w,0);
+  sg.addColorStop(0,'rgba(0,0,0,.18)'); sg.addColorStop(.15,'rgba(0,0,0,0)'); sg.addColorStop(.85,'rgba(0,0,0,0)'); sg.addColorStop(1,'rgba(0,0,0,.14)');
+  ctx.fillStyle=sg; ctx.fillRect(x,y,w,h); ctx.restore();
+
+  // frosting top
+  ctx.beginPath(); ctx.ellipse(x+w/2,y,w/2,h*.12,0,0,Math.PI*2);
+  var fg=ctx.createRadialGradient(x+w/2-w*.08,y,0,x+w/2,y,w/2);
+  fg.addColorStop(0,'rgba(255,255,255,.55)'); fg.addColorStop(1,fr);
+  ctx.fillStyle=fg; ctx.fill();
+
+  // drips
+  if(t.drip!=='none'){
+    var nd=Math.max(2,Math.floor(w/28));
+    for(var d=0;d<nd;d++){
+      var dx=x+12+d*(w-24)/(nd-1||1);
+      var dh=t.drip==='long'?(14+Math.sin(d*1.9)*9):(8+Math.sin(d*2.2)*5);
+      ctx.fillStyle=fr;
+      ctx.fillRect(dx-4,y,8,dh);
+      ctx.beginPath(); ctx.arc(dx,y+dh, t.drip==='long'?5:6,0,Math.PI*2); ctx.fill();
+    }
+  }
+
+  // sprinkles
+  if(t.sprinkles){
+    var sc=['#c9a84c','#d4a0b0','#a0c4b8','#b8a8d0','#e8cc7a'];
+    for(var s=0;s<Math.floor(w/14);s++){
+      var sx=x+8+Math.random()*(w-16), sy=y+10+Math.random()*(h-18);
+      ctx.save(); ctx.translate(sx,sy); ctx.rotate(Math.random()*Math.PI*2);
+      ctx.fillStyle=sc[Math.floor(Math.random()*sc.length)];
+      ctx.globalAlpha=.7; ctx.fillRect(-5,-1.5,10,3); ctx.restore();
+    }
+  }
+
+  // candles
+  if(t.candles>0){
+    var nc=t.candles, cspan=w*.65;
+    var ccolors=['#d4a0b0','#c9a84c','#a0c4b8','#b8a8d0','#d4c4a0','#c9a84c','#d4a0b0','#b8a8d0','#a0c4b8'];
+    for(var ci=0;ci<nc;ci++){
+      var cxc=x+w/2-cspan/2+(nc===1?0:ci*(cspan/(nc-1)));
+      ctx.fillStyle=ccolors[ci%ccolors.length];
+      ctx.fillRect(cxc-4,y-24,8,24);
+      ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=1; ctx.strokeRect(cxc-4,y-24,8,24);
+      // flame
+      flameT+=.0008;
+      var fl2=Math.sin(flameT*60+ci*2)*.4;
+      ctx.save(); ctx.translate(cxc+fl2,y-30);
+      ctx.beginPath(); ctx.ellipse(0,0,3+Math.abs(fl2)*.5,6.5,0,0,Math.PI*2);
+      var flg=ctx.createRadialGradient(0,-1,.5,0,0,8);
+      flg.addColorStop(0,'#fff9a0'); flg.addColorStop(.5,'#ffd6a5'); flg.addColorStop(1,'rgba(255,143,100,0)');
+      ctx.fillStyle=flg; ctx.fill(); ctx.restore();
+    }
+  }
+
+  // selection outline
+  if(isSelected){
+    ctx.save();
+    ctx.strokeStyle=SELECTED_COLOR; ctx.lineWidth=2;
+    ctx.shadowColor=SELECTED_COLOR; ctx.shadowBlur=12;
+    ctx.setLineDash([6,4]);
+    ctx.strokeRect(x-2,y-2,w+4,h+4);
+    ctx.setLineDash([]); ctx.shadowBlur=0;
+    // corner handles
+    [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(function(pt){
+      ctx.fillStyle=SELECTED_COLOR; ctx.fillRect(pt[0]-4,pt[1]-4,8,8);
+    });
+    ctx.restore();
+  }
+
+  // art deco border line
+  ctx.strokeStyle='rgba(201,168,76,.22)'; ctx.lineWidth=1; ctx.strokeRect(x,y,w,h);
+}
+var SELECTED_COLOR = '#e8cc7a';
+
+/* ═══════════ DRAW PHOTO ═══════════ */
+function drawPhoto(){
+  if(!globalState.photo)return;
+  var px=globalState.photoX||W/2, py=globalState.photoY||H/2;
+  var r=globalState.photoSize/2;
+  ctx.save(); ctx.translate(px,py); ctx.globalAlpha=globalState.photoOpacity;
+  // clip
+  ctx.beginPath();
+  if(globalState.photoShape==='circle'){ ctx.arc(0,0,r,0,Math.PI*2); }
+  else if(globalState.photoShape==='heart'){
+    ctx.moveTo(0,r*.25);
+    ctx.bezierCurveTo(0,-r*.1,-r*.6,-r*.4,-r*.6,0);
+    ctx.bezierCurveTo(-r*.6,r*.5,0,r*.75,0,r*.9);
+    ctx.bezierCurveTo(0,r*.75,r*.6,r*.5,r*.6,0);
+    ctx.bezierCurveTo(r*.6,-r*.4,0,-r*.1,0,r*.25);
+  }
+  else { ctx.rect(-r,-r,r*2,r*2); }
+  ctx.clip();
+  ctx.drawImage(globalState.photo,-r,-r,r*2,r*2);
+  ctx.restore();
+  // gold frame
+  ctx.save(); ctx.strokeStyle='rgba(201,168,76,.8)'; ctx.lineWidth=2.5;
+  ctx.shadowColor='rgba(201,168,76,.4)'; ctx.shadowBlur=8;
+  ctx.beginPath(); ctx.arc(px,py,r+2,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
+  // drag indicator
+  ctx.save(); ctx.globalAlpha=.25; ctx.strokeStyle=SELECTED_COLOR; ctx.lineWidth=1;
+  ctx.setLineDash([4,4]); ctx.beginPath(); ctx.arc(px,py,r+8,0,Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]); ctx.restore();
+}
+
+/* ═══════════ MAIN RENDER ═══════════ */
+function render(){
+  ctx.clearRect(0,0,W,H);
+
+  // background
+  if(globalState.bg==='dark'){
+    var gbg=ctx.createLinearGradient(0,0,W,H);
+    gbg.addColorStop(0,'#1a1408'); gbg.addColorStop(1,'#0e0c04');
+    ctx.fillStyle=gbg; ctx.fillRect(0,0,W,H);
+    // subtle art deco grid
+    ctx.strokeStyle='rgba(201,168,76,.04)'; ctx.lineWidth=1;
+    for(var gx=0;gx<W;gx+=40){ ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke(); }
+    for(var gy=0;gy<H;gy+=40){ ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke(); }
+  } else if(globalState.bg==='cream'){
+    var cbg=ctx.createLinearGradient(0,0,W,H);
+    cbg.addColorStop(0,'#f5ead2'); cbg.addColorStop(1,'#e8d8b8');
+    ctx.fillStyle=cbg; ctx.fillRect(0,0,W,H);
+  } else {
+    // marble
+    ctx.fillStyle='#e8e0d0'; ctx.fillRect(0,0,W,H);
+    for(var mi=0;mi<18;mi++){
+      ctx.save(); ctx.globalAlpha=.04+Math.random()*.04;
+      ctx.strokeStyle='rgba(150,130,100,1)'; ctx.lineWidth=1+Math.random()*2;
+      ctx.beginPath(); ctx.moveTo(Math.random()*W,0); ctx.bezierCurveTo(Math.random()*W,H/3,Math.random()*W,H*2/3,Math.random()*W,H); ctx.stroke(); ctx.restore();
+    }
+  }
+
+  // art deco corner ornaments
+  drawDecoCorners();
+
+  // plate
+  if(globalState.plate!=='none'){
+    var pcy=H-48;
+    ctx.beginPath(); ctx.ellipse(W/2,pcy,175,28,0,0,Math.PI*2);
+    var platecol = globalState.plate==='gold' ? ['#e8cc7a','#8b6914','#c9a84c'] : ['#d8d8e0','#888898','#b8b8c8'];
+    var pg=ctx.createRadialGradient(W/2-30,pcy,10,W/2,pcy,175);
+    pg.addColorStop(0,platecol[0]); pg.addColorStop(.5,platecol[2]); pg.addColorStop(1,platecol[1]);
+    ctx.fillStyle=pg; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  // glow behind tiers
+  if(globalState.glow==='on'&&tiers.length){
+    var lowy=Math.max.apply(null,tiers.map(function(t){return t.y+t.h;}));
+    var gg=ctx.createRadialGradient(W/2,lowy,0,W/2,lowy,200);
+    gg.addColorStop(0,'rgba(201,168,76,.07)'); gg.addColorStop(1,'rgba(201,168,76,0)');
+    ctx.fillStyle=gg; ctx.fillRect(0,0,W,H);
+  }
+
+  // draw tiers
+  tiers.forEach(function(t,i){ drawTier(t, i===selected); });
+
+  // photo
+  drawPhoto();
+
+  // message
+  if(globalState.msg&&tiers.length>0){
+    var bt=tiers.reduce(function(a,b){return a.y+a.h>b.y+b.h?a:b;});
+    var msgY=bt.y+bt.h/2+6;
+    ctx.save();
+    ctx.font='italic 400 '+(Math.min(18,bt.w*.08))+'px "Cormorant Garamond",serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle='rgba(232,204,122,.9)';
+    ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=4;
+    ctx.fillText(globalState.msg, bt.x+bt.w/2, msgY);
+    ctx.restore();
+  }
+
+  // empty state hint
+  if(tiers.length===0){
+    ctx.save(); ctx.globalAlpha=.22;
+    ctx.font='italic 300 1.1rem "Cormorant Garamond",serif';
+    ctx.fillStyle=SELECTED_COLOR; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('Enable "Drag to Place Tier" and draw tiers here',W/2,H/2);
+    ctx.font='italic 300 .85rem "Cormorant Garamond",serif';
+    ctx.fillText('— or click Auto Cake to start instantly —',W/2,H/2+28);
+    ctx.restore();
+  }
+}
+
+/* ═══════════ DECO CORNERS ═══════════ */
+function drawDecoCorners(){
+  var m=18, s=28;
+  var corners=[[m,m,1,1],[W-m,m,-1,1],[m,H-m,1,-1],[W-m,H-m,-1,-1]];
+  ctx.strokeStyle='rgba(201,168,76,.35)'; ctx.lineWidth=1;
+  corners.forEach(function(co){
+    var x=co[0],y=co[1],sx=co[2],sy=co[3];
+    ctx.beginPath(); ctx.moveTo(x,y+sy*s); ctx.lineTo(x,y); ctx.lineTo(x+sx*s,y); ctx.stroke();
+    // inner diamond
+    ctx.save(); ctx.translate(x+sx*8,y+sy*8); ctx.rotate(Math.PI/4);
+    ctx.fillStyle='rgba(201,168,76,.4)'; ctx.fillRect(-3,-3,6,6);
+    ctx.restore();
+  });
+  // top/bottom center ornaments
+  [[W/2,m],[W/2,H-m]].forEach(function(pt){
+    ctx.save(); ctx.translate(pt[0],pt[1]); ctx.rotate(Math.PI/4);
+    ctx.fillStyle='rgba(201,168,76,.3)'; ctx.fillRect(-4,-4,8,8);
+    ctx.restore();
+  });
+}
+
+/* ═══════════ ANIMATION LOOP ═══════════ */
+(function loop(){
+  flameT += 0.001;
+  if(tiers.some(function(t){return t.candles>0;})) render();
+  requestAnimationFrame(loop);
+})();
+
+render();
+
+})();
+</script>
+</body>
+</html>

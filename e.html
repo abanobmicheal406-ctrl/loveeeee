@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Living Memory</title>
+    <style>
+        :root {
+            --accent: #ff00b3;
+            --bg: #ffd7f0;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: var(--bg);
+            /* Calm, dark ambient background decoration */
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(251, 191, 36, 0.04) 0%, transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(251, 191, 36, 0.04) 0%, transparent 45%);
+            color: white;
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+            user-select: none;
+            touch-action: none;
+        }
+
+        /* Stage 1: Intro */
+        #intro-screen {
+            position: fixed; inset: 0; z-index: 100;
+            background: black; display: flex;
+            align-items: center; justify-content: center;
+            flex-direction: column; transition: opacity 2s;
+        }
+
+        .fade-text {
+            font-size: 1.5rem; text-align: center; opacity: 0;
+            position: absolute; transition: opacity 1.5s; width: 80%;
+        }
+
+        /* Main container holding the split memory items */
+        #memory-container {
+            position: fixed; top: 45%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 95%; max-width: 900px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            z-index: 1;
+        }
+
+        /* The row that splits the two polaroids */
+        .polaroid-split-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px; /* Generous gap splitting the videos */
+            width: 100%;
+        }
+
+        /* Individual Polaroid frames for each video */
+        .polaroid-frame {
+            flex: 1;
+            background: white;
+            padding: 15px 15px 40px 15px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            border-radius: 4px;
+            transition: transform 0.5s ease;
+        }
+
+        .polaroid-frame:hover {
+            transform: translateY(-5px);
+        }
+
+        video {
+            width: 100%; 
+            height: 50vh;
+            object-fit: cover; 
+            object-position: center 35%;
+            background: #111; 
+            display: block;
+            border-radius: 2px;
+        }
+
+        /* Responsive stack for mobile devices */
+        @media (max-width: 700px) {
+            .polaroid-split-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+            video {
+                height: 25vh;
+            }
+            #memory-container {
+                top: 48%;
+            }
+            .polaroid-frame {
+                padding-bottom: 20px;
+            }
+        }
+
+        /* Happy Birthday placement below the split items */
+        #birthday-text {
+            color: #ffffff;
+            font-family: 'Brush Script MT', cursive;
+            font-size: 3.5rem;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 3s;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        #mist-overlay {
+            position: fixed; inset: 0; z-index: 10;
+            background: #08080a;
+            mask-image: radial-gradient(circle 120px at var(--x, -100%) var(--y, -100%), transparent 0%, black 100%);
+            -webkit-mask-image: radial-gradient(circle 120px at var(--x, -100%) var(--y, -100%), transparent 0%, black 100%);
+        }
+
+        .sparkle {
+            position: fixed; pointer-events: none;
+            z-index: 11; font-size: 20px;
+            animation: floatUp 1.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(-60px) scale(0.3); opacity: 0; }
+        }
+
+        /* The Changing Button */
+        #action-button {
+            position: fixed; bottom: 40px; left: 50%;
+            transform: translateX(-50%); z-index: 20;
+            padding: 15px 40px; background: rgba(8, 8, 10, 0.85);
+            color: var(--accent); border-radius: 50px;
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            font-size: 1.1rem; cursor: pointer;
+            transition: all 0.5s ease; opacity: 0;
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.5px;
+        }
+
+        #action-button.ready {
+            background: var(--accent);
+            color: black;
+            border-color: var(--accent);
+            box-shadow: 0 0 25px var(--accent);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <p class="fade-text" id="t1">Sometimes the best moments...</p>
+        <p class="fade-text" id="t2">Are the ones we get to share.</p>
+        <p class="fade-text" id="t3">Clear the mist to see my favorite ones.</p>
+        <button onclick="startExperience()" id="start-btn" style="opacity:0; margin-top:100px; background:none; border:1px solid var(--accent); color:var(--accent); padding:10px 25px; border-radius:20px; cursor:pointer; font-family: 'Georgia', serif;">Start</button>
+    </div>
+
+    <div id="memory-container">
+        <div class="polaroid-split-row">
+            <div class="polaroid-frame">
+                <video id="mainVideo" loop muted playsinline>
+                    <source src="run.mp4" type="video/mp4">
+                </video>
+            </div>
+            
+            <div class="polaroid-frame">
+                <video id="secondVideo" loop muted playsinline>
+                    <source src="play.mov" type="video/mp4">
+                </video>
+            </div>
+        </div>
+        
+        <div id="birthday-text">Happy Birthday my soulmate! ❤️</div>
+    </div>
+
+    <div id="mist-overlay"></div>
+
+    <button id="action-button" onclick="nextSurprise()">Wipe the screen...</button>
+
+    <script>
+        const intro = document.getElementById('intro-screen');
+        const container = document.getElementById('memory-container');
+        const mist = document.getElementById('mist-overlay');
+        const video = document.getElementById('mainVideo');
+        const video2 = document.getElementById('secondVideo'); 
+        const bdayText = document.getElementById('birthday-text');
+        const actionBtn = document.getElementById('action-button');
+
+        let exploration = 0;
+        let finished = false;
+
+        // Intro Timing
+        setTimeout(() => { document.getElementById('t1').style.opacity = 1; }, 1000);
+        setTimeout(() => { document.getElementById('t1').style.opacity = 0; }, 3000);
+        setTimeout(() => { document.getElementById('t2').style.opacity = 1; }, 4500);
+        setTimeout(() => { document.getElementById('t2').style.opacity = 0; }, 6500);
+        setTimeout(() => { document.getElementById('t3').style.opacity = 1; document.getElementById('start-btn').style.opacity = 1; }, 8000);
+
+        function startExperience() {
+            intro.style.opacity = 0;
+            setTimeout(() => { 
+                intro.style.display = 'none';
+                container.style.display = 'flex';
+                actionBtn.style.opacity = 1;
+                video.play();
+                video2.play(); 
+            }, 2000);
+        }
+
+        function createSparkle(x, y) {
+            const s = document.createElement('div');
+            s.className = 'sparkle';
+            s.innerHTML = '✨';
+            s.style.left = x + 'px'; s.style.top = y + 'px';
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 1500);
+        }
+
+        function handleMove(e) {
+            if (finished || container.style.display === 'none') return;
+            
+            const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+
+            document.documentElement.style.setProperty('--x', x + 'px');
+            document.documentElement.style.setProperty('--y', y + 'px');
+
+            if (Math.random() > 0.88) createSparkle(x, y);
+
+            exploration++;
+            if (exploration > 120) reveal();
+        }
+
+        function reveal() {
+            finished = true;
+            mist.style.transition = 'opacity 3.5s ease-out';
+            mist.style.opacity = '0';
+            bdayText.style.opacity = '1';
+            video.muted = false;
+            video2.muted = false; 
+
+            actionBtn.innerText = "See Next Surprise →";
+            actionBtn.classList.add('ready');
+        }
+
+        function nextSurprise() {
+            if (finished) {
+                window.location.href = "final.surprise.html";
+            }
+        }
+
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('touchmove', handleMove);
+    </script>
+</body>
+</html>

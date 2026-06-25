@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garden</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Cinzel:wght@300&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0f; overflow: hidden; width: 100vw; height: 100vh; cursor: crosshair; font-family: 'Cormorant Garamond', serif; }
+  canvas { display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+  .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 10; }
+  .overlay::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 40%, rgba(5,5,12,0.55) 75%, rgba(5,5,12,0.92) 100%); }
+  .overlay::after { content: ''; position: absolute; inset: 0; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 180px; }
+  .title-block { position: fixed; top: 48px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 20; pointer-events: none; animation: fadeIn 2.5s ease forwards; opacity: 0; }
+  .title-block h1 { font-family: 'Cinzel', serif; font-weight: 300; font-size: clamp(13px, 1.5vw, 18px); letter-spacing: 0.45em; text-transform: uppercase; color: rgba(255,220,180,0.55); }
+  .title-block p { margin-top: 10px; font-size: clamp(11px, 1.1vw, 14px); letter-spacing: 0.2em; color: rgba(255,200,160,0.25); font-style: italic; }
+  .hint { position: fixed; bottom: 44px; left: 50%; transform: translateX(-50%); z-index: 20; pointer-events: none; text-align: center; animation: fadeIn 3.5s ease forwards; opacity: 0; }
+  .hint span { font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(255,200,160,0.22); }
+  .controls { position: fixed; bottom: 44px; right: 48px; z-index: 20; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; animation: fadeIn 3.5s ease forwards; opacity: 0; }
+  .ctrl-btn { background: rgba(255,220,180,0.05); border: 1px solid rgba(255,220,180,0.15); color: rgba(255,200,160,0.5); font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; padding: 9px 18px; cursor: pointer; pointer-events: all; transition: all 0.3s ease; backdrop-filter: blur(4px); }
+  .ctrl-btn:hover { background: rgba(255,220,180,0.1); border-color: rgba(255,200,160,0.4); color: rgba(255,210,170,0.85); }
+  .mode-indicator { position: fixed; top: 48px; right: 48px; z-index: 20; pointer-events: none; animation: fadeInSimple 3s ease forwards; opacity: 0; }
+  .mode-indicator span { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,200,160,0.28); font-family: 'Cinzel', serif; }
+  .bloom-count { position: fixed; top: 48px; left: 48px; z-index: 20; pointer-events: none; animation: fadeInSimple 3s ease forwards; opacity: 0; }
+  .bloom-count span { font-size: 10px; letter-spacing: 0.3em; color: rgba(255,200,160,0.28); font-family: 'Cinzel', serif; text-transform: uppercase; }
+  @keyframes fadeIn { 0% { opacity: 0; transform: translateX(-50%) translateY(6px); } 100% { opacity: 1; transform: translateX(-50%) translateY(0); } }
+  @keyframes fadeInSimple { 0% { opacity: 0; } 100% { opacity: 1; } }
+  .palette-row { display: flex; gap: 8px; align-items: center; justify-content: flex-end; pointer-events: all; }
+  .palette-dot { width: 10px; height: 10px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.2s ease, border-color 0.2s ease; opacity: 0.6; }
+  .palette-dot:hover, .palette-dot.active { transform: scale(1.5); opacity: 1; border-color: rgba(255,255,255,0.4); }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="overlay"></div>
+<div class="title-block"><h1>Garden</h1><p>touch to bloom</p></div>
+<div class="bloom-count"><span id="countLabel">blooms — 0</span></div>
+<div class="mode-indicator"><span id="modeLabel">scatter · off</span></div>
+<div class="hint"><span>click &nbsp;·&nbsp; drag &nbsp;·&nbsp; grow</span></div>
+<div class="controls">
+  <div class="palette-row" id="palettes"></div>
+  <button class="ctrl-btn" id="saveBtn">Save JPG</button>
+  <button class="ctrl-btn" id="scatterBtn">Scatter</button>
+  <button class="ctrl-btn" id="clearBtn">Clear</button>
+</div>
+<script>
+function Vector(x,y){this.x=x;this.y=y;}
+Vector.prototype={rotate(t){var x=this.x,y=this.y;this.x=Math.cos(t)*x-Math.sin(t)*y;this.y=Math.sin(t)*x+Math.cos(t)*y;return this;},mult(f){this.x*=f;this.y*=f;return this;},clone(){return new Vector(this.x,this.y);},length(){return Math.sqrt(this.x*this.x+this.y*this.y);},subtract(v){this.x-=v.x;this.y-=v.y;return this;},set(x,y){this.x=x;this.y=y;return this;}};
+
+function Petal(sA,sB,sa,a,gf,bloom){this.stretchA=sA;this.stretchB=sB;this.startAngle=sa;this.angle=a;this.bloom=bloom;this.growFactor=gf;this.r=1;this.isfinished=false;}
+Petal.prototype={
+  draw(){var ctx=this.bloom.garden.ctx;var v1=new Vector(0,this.r).rotate(Garden.degrad(this.startAngle));var v2=v1.clone().rotate(Garden.degrad(this.angle));var v3=v1.clone().mult(this.stretchA);var v4=v2.clone().mult(this.stretchB);ctx.strokeStyle=this.bloom.c;ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(v1.x,v1.y);ctx.bezierCurveTo(v3.x,v3.y,v4.x,v4.y,v2.x,v2.y);ctx.stroke();},
+  render(){if(this.r<=this.bloom.r){this.r+=this.growFactor;this.draw();}else{this.isfinished=true;}}
+};
+
+function Bloom(p,r,c,pc,garden){this.p=p;this.r=r;this.c=c;this.pc=pc;this.petals=[];this.garden=garden;this.init();this.garden.addBloom(this);}
+Bloom.prototype={
+  draw(){var done=true;this.garden.ctx.save();this.garden.ctx.translate(this.p.x,this.p.y);for(var i=0;i<this.petals.length;i++){this.petals[i].render();done*=this.petals[i].isfinished;}this.garden.ctx.restore();if(done)this.garden.removeBloom(this);},
+  init(){var angle=360/this.pc;var sa=Garden.randomInt(0,90);for(var i=0;i<this.pc;i++){this.petals.push(new Petal(Garden.random(Garden.options.petalStretch.min,Garden.options.petalStretch.max),Garden.random(Garden.options.petalStretch.min,Garden.options.petalStretch.max),sa+i*angle,angle,Garden.random(Garden.options.growFactor.min,Garden.options.growFactor.max),this));}}
+};
+
+function Garden(ctx,element){this.blooms=[];this.element=element;this.ctx=ctx;this._total=0;}
+Garden.prototype={
+  render(){for(var i=0;i<this.blooms.length;i++)this.blooms[i].draw();},
+  addBloom(b){this.blooms.push(b);this._total++;updateCount(this._total);},
+  removeBloom(b){for(var i=0;i<this.blooms.length;i++){if(this.blooms[i]===b){this.blooms.splice(i,1);return;}}},
+  createRandomBloom(x,y){var o=Garden.options;this.createBloom(x,y,Garden.randomInt(o.bloomRadius.min,o.bloomRadius.max),Garden.randomrgba(o.color.rmin,o.color.rmax,o.color.gmin,o.color.gmax,o.color.bmin,o.color.bmax,o.color.opacity),Garden.randomInt(o.petalCount.min,o.petalCount.max));},
+  createBloom(x,y,r,c,pc){new Bloom(new Vector(x,y),r,c,pc,this);},
+  clear(){this.blooms=[];this._total=0;updateCount(0);this.ctx.clearRect(0,0,this.element.width,this.element.height);}
+};
+
+Garden.options={
+  petalCount:  {min:8,  max:10},
+  petalStretch:{min:0.1, max:3},
+  growFactor:  {min:0.1, max:1},
+  bloomRadius: {min:4,  max:18},
+  color:{rmin:128,rmax:255,gmin:0,gmax:128,bmin:0,bmax:128,opacity:0.12}
+};
+Garden.random    =(a,b)=>Math.random()*(b-a)+a;
+Garden.randomInt =(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+Garden.circle    =2*Math.PI;
+Garden.degrad    =a=>Garden.circle/360*a;
+Garden.rgba      =(r,g,b,a)=>`rgba(${r},${g},${b},${a})`;
+Garden.randomrgba=function(rmin,rmax,gmin,gmax,bmin,bmax,a){var r=Math.round(Garden.random(rmin,rmax));var g=Math.round(Garden.random(gmin,gmax));var b=Math.round(Garden.random(bmin,bmax));if(Math.abs(r-g)<=5&&Math.abs(g-b)<=5&&Math.abs(b-r)<=5)return Garden.rgba(rmin,rmax,gmin,gmax,bmin,bmax,a);return Garden.rgba(r,g,b,a);};
+
+const PALETTES=[
+  {name:'Rose',   dot:'#d4607a',rmin:160,rmax:255,gmin:30, gmax:110,bmin:60, bmax:140,opacity:0.13},
+  {name:'Gold',   dot:'#e8a832',rmin:180,rmax:255,gmin:120,gmax:210,bmin:0,  bmax:60, opacity:0.13},
+  {name:'Violet', dot:'#9060d4',rmin:100,rmax:200,gmin:0,  gmax:80, bmin:160,bmax:255,opacity:0.13},
+  {name:'Teal',   dot:'#30c4b4',rmin:0,  rmax:80, gmin:150,gmax:220,bmin:150,bmax:230,opacity:0.13},
+  {name:'Crimson',dot:'#c43030',rmin:160,rmax:255,gmin:0,  gmax:60, bmin:0,  bmax:60, opacity:0.13},
+  {name:'White',  dot:'#e0ddd8',rmin:200,rmax:255,gmin:200,gmax:255,bmin:200,bmax:255,opacity:0.09},
+];
+let activePalette=0;
+function applyPalette(i){activePalette=i;var p=PALETTES[i];Garden.options.color={rmin:p.rmin,rmax:p.rmax,gmin:p.gmin,gmax:p.gmax,bmin:p.bmin,bmax:p.bmax,opacity:p.opacity};document.querySelectorAll('.palette-dot').forEach((d,j)=>d.classList.toggle('active',j===i));}
+function buildPaletteUI(){var row=document.getElementById('palettes');PALETTES.forEach((p,i)=>{var d=document.createElement('div');d.className='palette-dot'+(i===0?' active':'');d.style.background=p.dot;d.title=p.name;d.addEventListener('click',()=>applyPalette(i));row.appendChild(d);});}
+
+var canvas=document.getElementById('c');
+var ctx=canvas.getContext('2d');
+var garden;
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();
+window.addEventListener('resize',()=>{resize();if(garden)garden.clear();});
+garden=new Garden(ctx,canvas);
+function updateCount(n){document.getElementById('countLabel').textContent=`blooms — ${n}`;}
+
+var isDown=false,throttle=0;
+function spawnAt(x,y){garden.createRandomBloom(x,y);}
+canvas.addEventListener('pointerdown',e=>{isDown=true;spawnAt(e.clientX,e.clientY);});
+canvas.addEventListener('pointerup',()=>isDown=false);
+canvas.addEventListener('pointerleave',()=>isDown=false);
+canvas.addEventListener('pointermove',e=>{if(!isDown)return;var now=performance.now();if(now-throttle>40){throttle=now;spawnAt(e.clientX,e.clientY);}});
+
+var scatterInterval=null,scatterActive=false;
+document.getElementById('scatterBtn').addEventListener('click',()=>{scatterActive=!scatterActive;document.getElementById('scatterBtn').textContent=scatterActive?'Stop':'Scatter';document.getElementById('modeLabel').textContent=scatterActive?'scatter · on':'scatter · off';if(scatterActive){scatterInterval=setInterval(()=>{garden.createRandomBloom(Garden.random(50,canvas.width-50),Garden.random(50,canvas.height-50));},80);}else{clearInterval(scatterInterval);}});
+document.getElementById('clearBtn').addEventListener('click',()=>garden.clear());
+
+// ── Save as JPG ──
+document.getElementById('saveBtn').addEventListener('click',()=>{
+  // Create a temp canvas with dark background so transparency becomes #0a0a0f
+  var tmp = document.createElement('canvas');
+  tmp.width = canvas.width;
+  tmp.height = canvas.height;
+  var tctx = tmp.getContext('2d');
+  tctx.fillStyle = '#0a0a0f';
+  tctx.fillRect(0, 0, tmp.width, tmp.height);
+  tctx.drawImage(canvas, 0, 0);
+  var link = document.createElement('a');
+  link.download = 'garden.jpg';
+  link.href = tmp.toDataURL('image/jpeg', 0.95);
+  link.click();
+});
+
+function loop(){garden.render();requestAnimationFrame(loop);}
+loop();
+buildPaletteUI();
+setTimeout(()=>{for(var i=0;i<18;i++){setTimeout(()=>{garden.createRandomBloom(Garden.random(80,canvas.width-80),Garden.random(80,canvas.height-80));},i*120);}},600);
+</script>
+</body>
+</html>

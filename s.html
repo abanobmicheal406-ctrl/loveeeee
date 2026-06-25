@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Infinite Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --romance-red: #ff4d6d;
+            --bg: #fffcf9;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            font-family: 'Quicksand', sans-serif;
+            overflow-y: hidden;
+            transition: background-color 1s ease;
+            cursor: none; /* Hide real cursor to use heart trail */
+        }
+
+        /* Cursor Heart Style */
+        .cursor-heart {
+            position: fixed;
+            pointer-events: none;
+            color: var(--romance-red);
+            font-size: 1.2rem;
+            z-index: 2000;
+            user-select: none;
+            transition: transform 0.1s ease-out;
+        }
+
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: #fffcf9;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+        }
+
+        #startBtn {
+            padding: 20px 50px;
+            font-family: 'Permanent Marker', cursive;
+            background: var(--romance-red);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.8rem;
+            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.3);
+        }
+
+        .timeline-wrapper {
+            display: flex;
+            width: 1800vw; 
+            height: 100vh;
+            position: relative;
+            align-items: center;
+            background-image: radial-gradient(#ffccd5 1px, transparent 1px);
+            background-size: 40px 40px;
+            visibility: hidden;
+        }
+
+        .path-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            border-top: 3px dotted var(--romance-red);
+            z-index: 1;
+        }
+
+        .milestone {
+            position: relative;
+            z-index: 2;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-frame {
+            width: 280px;
+            height: 350px;
+            background: white;
+            padding: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            transform: translateY(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 85%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .date-tag {
+            background: var(--romance-red);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            margin-top: 25px;
+            font-weight: bold;
+        }
+
+        .caption {
+            margin-top: 10px;
+            color: #555;
+            max-width: 220px;
+            text-align: center;
+        }
+
+        #heart-icon {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            font-size: 2.5rem;
+            color: var(--romance-red);
+            z-index: 100;
+            animation: beat 1s infinite;
+        }
+
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 4px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+            z-index: 10;
+        }
+
+        #inner-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--romance-red);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="overlay">
+        <h2 style="color: var(--romance-red);">Are you ready?</h2>
+        <button id="startBtn">View Our Story 💌</button>
+    </div>
+
+    <div id="heart-icon">❤</div>
+    <div class="progress-bar"><div id="inner-bar"></div></div>
+
+    <div class="timeline-wrapper" id="mainWrapper">
+        <div class="path-line"></div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo1.png"></div>
+            <div class="date-tag">THE START</div>
+            <p class="caption">The moment that changed everything.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo2.png"></div>
+            <div class="date-tag">MARCH 2025</div>
+            <p class="caption">The first of a billion smiles.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo3.JPG"></div>
+            <div class="date-tag">APRIL 2025</div>
+            <p class="caption">Our first adventure away.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo4.JPG"></div>
+            <div class="date-tag">JUNE 2025</div>
+            <p class="caption">Endless summer nights.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo6.JPG"></div>
+            <div class="date-tag">AUGUST 2025</div>
+            <p class="caption">Just another quiet Tuesday.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo9.jpg"></div>
+            <div class="date-tag">OCTOBER 2025</div>
+            <p class="caption">Warm colors and cozy vibes.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo7.jpg"></div>
+            <div class="date-tag">DECEMBER 2025</div>
+            <p class="caption">The best gift was you.</p>
+        </div>
+
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo27.jpg"></div>
+            <div class="date-tag">A NEW MEMORY</div>
+            <p class="caption">Another beautiful chapter.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo29.jpg"></div>
+            <div class="date-tag">ANOTHER DAY</div>
+            <p class="caption">A moment to remember forever.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo30.jpg"></div>
+            <div class="date-tag">SPECIAL MOMENT</div>
+            <p class="caption">Every picture tells our story.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo31.jpg"></div>
+            <div class="date-tag">MORE SMILES</div>
+            <p class="caption">Happiness captured in time.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo37.jpg"></div>
+            <div class="date-tag">PRECIOUS TIME</div>
+            <p class="caption">Small moments become big memories.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo38.jpg"></div>
+            <div class="date-tag">OUR JOURNEY</div>
+            <p class="caption">More memories together.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo39.jpg"></div>
+            <div class="date-tag">FOREVER</div>
+            <p class="caption">A photo full of love.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo43.JPG"></div>
+            <div class="date-tag">NEW ADVENTURE</div>
+            <p class="caption">Another page in our story.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo11.jpg"></div>
+            <div class="date-tag">HAPPY DAYS</div>
+            <p class="caption">More reasons to smile.</p>
+        </div>
+
+        <div class="milestone">
+            <div class="photo-frame"><img src="photo44.jpg"></div>
+            <div class="date-tag">SWEET MEMORY</div>
+            <p class="caption">Keeping this moment forever.</p>
+        </div>
+        <div class="milestone">
+            <h1 style="font-family: 'Permanent Marker'; color: var(--romance-red); font-size: 4rem; text-align: center;">
+                TO BE CONTINUED...
+            </h1>
+            <p style="font-size: 1.2rem; color: #666;">I love you forever. ❤️</p>
+        </div>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const overlay = document.getElementById('overlay');
+        const wrapper = document.getElementById('mainWrapper');
+        const music = document.getElementById('bgMusic');
+        const heart = document.getElementById('heart-icon');
+        const bar = document.getElementById('inner-bar');
+        
+        let confettiFired = false;
+
+        // --- Cursor Heart Trail Logic ---
+        document.addEventListener('mousemove', (e) => {
+            const heartEl = document.createElement('div');
+            heartEl.innerHTML = '❤';
+            heartEl.className = 'cursor-heart';
+            heartEl.style.left = e.clientX + 'px';
+            heartEl.style.top = e.clientY + 'px';
+            document.body.appendChild(heartEl);
+
+            // Animate and Remove
+            setTimeout(() => {
+                heartEl.style.transform = `translate(${(Math.random() - 0.5) * 100}px, ${(Math.random() - 0.5) * 100}px) scale(0)`;
+                heartEl.style.opacity = '0';
+            }, 50);
+            setTimeout(() => heartEl.remove(), 1000);
+        });
+
+        startBtn.addEventListener('click', () => {
+            music.play();
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                wrapper.style.visibility = 'visible';
+                document.body.style.cursor = 'none';
+            }, 1000);
+        });
+
+        window.addEventListener('wheel', (e) => {
+            window.scrollBy({ left: e.deltaY * 4, behavior: 'auto' });
+
+            const maxScroll = document.body.scrollWidth - window.innerWidth;
+            const scrollPercent = (window.scrollX / maxScroll) * 100;
+            
+            bar.style.width = scrollPercent + "%";
+
+            // Heartbeat speed
+            const beatSpeed = 1 - (scrollPercent / 120); 
+            heart.style.animationDuration = Math.max(0.2, beatSpeed) + "s";
+
+            // Background Shift
+            const greenBlueVal = 250 - (scrollPercent * 0.5);
+            document.body.style.backgroundColor = `rgb(255, ${greenBlueVal}, ${greenBlueVal})`;
+
+            // Confetti Finale
+            if (scrollPercent > 98 && !confettiFired) {
+                confetti({
+                    particleCount: 200,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    colors: ['#ff4d6d', '#ffffff', '#ffccd5']
+                });
+                confettiFired = true;
+            }
+        });
+    </script>
+</body>
+</html>
